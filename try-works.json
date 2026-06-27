@@ -1,0 +1,707 @@
+{
+  "name": "Try-Works",
+  "version": "1.0.0",
+  "description": "A design system rooted in Moby-Dick (ch. 96, the try-works). A cold sea is the field; the fire is the load-bearing mark. Ships as web/CSS, Tailwind, Typst slides, an Obsidian theme, a Ghostty terminal preset, and a VS Code code theme. Two modes: Try-Fire (dark) and True Lamp (light).",
+  "signature": "Steer by the steady light, not the fire. The cool field (the sea, the whale white, the True Lamp daylight) carries the substance; the fire is the rare mark, kept rare because to fix on it is to lose your bearings (Moby-Dick, ch. 96). The one deliberate exception is the code tier, where a duty to colour-blind readers puts the fire on keywords. See FOUNDATIONS.md.",
+  "tiers": {
+    "core": "Identity hues used everywhere: ground, sea, fire, whale. These define the brand.",
+    "extended": "Working hues added only for code (VS Code, terminal ANSI): a derived green (kelp), red (brick), violet (dusk), plus a blue (tide) and cyan (shoal) drawn from the sea. They never appear on posters, slides, or the web."
+  },
+  "modes": {
+    "lit": {
+      "label": "Try-Fire",
+      "scheme": "dark",
+      "bg": "#12161b",
+      "surface": "#1b2127",
+      "surface-raised": "#232b32",
+      "text": "#f1efe9",
+      "text-muted": "#97a0a4",
+      "border": "#2c3640",
+      "accent": "#c9651d",
+      "accent-bright": "#e0832a",
+      "accent-deep": "#9a4a16",
+      "on-accent": "#11151a",
+      "sea-deep": "#14242c",
+      "sea": "#2c4953",
+      "sea-bright": "#4d7680",
+      "sea-pale": "#8fb6bd",
+      "on-sea": "#0f1c22"
+    },
+    "cold": {
+      "label": "True Lamp",
+      "scheme": "light",
+      "bg": "#dee7e4",
+      "surface": "#e7efeb",
+      "surface-raised": "#f2f7f4",
+      "text": "#18272b",
+      "text-muted": "#52646a",
+      "border": "#c4d2cd",
+      "accent": "#9e5017",
+      "accent-bright": "#b85f1c",
+      "accent-deep": "#7a3a10",
+      "on-accent": "#eef3f0",
+      "sea-deep": "#16242b",
+      "sea": "#264852",
+      "sea-bright": "#3d6b76",
+      "sea-pale": "#b4ccc9",
+      "on-sea": "#eef3f0"
+    }
+  },
+  "palette": {
+    "ground": {
+      "pitch": "#12161b",
+      "hold": "#1b2127",
+      "deck": "#232b32",
+      "iron": "#11151a"
+    },
+    "sea": {
+      "trough": "#14242c",
+      "swell": "#2c4953",
+      "spray": "#4d7680",
+      "foam": "#8fb6bd"
+    },
+    "fire": {
+      "ember": "#c9651d",
+      "flame": "#e0832a",
+      "oil": "#9a4a16"
+    },
+    "whale": {
+      "whale": "#f1efe9",
+      "bone": "#dee7e4",
+      "gull": "#97a0a4"
+    },
+    "extended": {
+      "kelp": "#86a87f",
+      "brick": "#d06a52",
+      "dusk": "#a487ba",
+      "tide": "#5f93b0",
+      "shoal": "#5f97a0"
+    }
+  },
+  "code": {
+    "comment": {
+      "color": "#97a0a4",
+      "style": "italic"
+    },
+    "keyword": {
+      "color": "#c9651d",
+      "style": "bold"
+    },
+    "string": {
+      "color": "#86a87f"
+    },
+    "number": {
+      "color": "#a487ba"
+    },
+    "function": {
+      "color": "#5f93b0"
+    },
+    "type": {
+      "color": "#5f97a0",
+      "style": "italic"
+    },
+    "decorator": {
+      "color": "#d06a52"
+    },
+    "variable": {
+      "color": "#f1efe9"
+    },
+    "parameter": {
+      "color": "#cdd2d3"
+    },
+    "operator": {
+      "color": "#aeb6b8"
+    },
+    "punctuation": {
+      "color": "#8a9296"
+    }
+  },
+  "terminal": {
+    "note": "ANSI 16-colour (lit). red, green, magenta derived in-register; yellow follows the fire.",
+    "background": "#12161b",
+    "foreground": "#f1efe9",
+    "cursor": "#c9651d",
+    "cursor-text": "#11151a",
+    "selection-bg": "#2c4953",
+    "selection-fg": "#f1efe9",
+    "ansi": [
+      "#1b2127",
+      "#c05a3a",
+      "#6f8f6a",
+      "#c9651d",
+      "#46708a",
+      "#8a6f9e",
+      "#5f97a0",
+      "#c9ccce",
+      "#3a4754",
+      "#d06a52",
+      "#86a87f",
+      "#e0832a",
+      "#5f93b0",
+      "#a487ba",
+      "#8fb6bd",
+      "#f1efe9"
+    ]
+  },
+  "type": {
+    "serif": {
+      "family": "Fraunces",
+      "license": "OFL",
+      "roles": [
+        "display",
+        "text"
+      ],
+      "axes": "opsz, wght, SOFT, WONK"
+    },
+    "sans": {
+      "family": "Archivo",
+      "license": "OFL",
+      "roles": [
+        "interface",
+        "ui"
+      ],
+      "axes": "wdth, wght"
+    },
+    "mono": {
+      "family": "JetBrains Mono",
+      "license": "OFL",
+      "roles": [
+        "code",
+        "labels"
+      ],
+      "axes": "wght"
+    },
+    "scale": {
+      "ratio": 1.25,
+      "base": "1rem",
+      "steps": {
+        "xs": "0.64rem",
+        "sm": "0.8rem",
+        "base": "1rem",
+        "lg": "1.25rem",
+        "xl": "1.563rem",
+        "2xl": "1.953rem",
+        "3xl": "2.441rem",
+        "4xl": "3.052rem",
+        "display": "clamp(2.5rem, 6vw, 4rem)",
+        "poster": "clamp(3rem, 10vw, 6.5rem)"
+      },
+      "leading": {
+        "tight": 1.08,
+        "snug": 1.3,
+        "normal": 1.55,
+        "relaxed": 1.7
+      },
+      "weight": {
+        "regular": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      }
+    }
+  },
+  "spacing": {
+    "unit": "0.25rem",
+    "scale": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem",
+      "16": "4rem",
+      "20": "5rem",
+      "24": "6rem"
+    },
+    "radius": {
+      "none": "0",
+      "sm": "2px",
+      "md": "4px",
+      "lg": "6px",
+      "pill": "999px"
+    },
+    "border": "1px"
+  },
+  "accessibility": {
+    "standard": "WCAG 2.1 (body 4.5:1, large/UI 3:1) plus a Machado-2009 CVD pass at full severity.",
+    "lit": {
+      "whale on pitch": 15.79,
+      "gull on pitch": 6.82,
+      "fire on pitch": 4.64,
+      "iron on fire": 4.68,
+      "foam on pitch": 8.3
+    },
+    "cold": {
+      "ink on paper": 12.21,
+      "muted on paper": 4.91,
+      "fire on paper": 4.61,
+      "button on fire": 5.05,
+      "sea-bright on paper": 4.67
+    },
+    "cvd": "Identity hues (sea vs fire) separate cleanly under protan/deutan/tritan. In the code tier the blue/amber axis is CVD-safe; residual close pairs (blue function vs violet number under deutan; blue vs cyan under tritan; amber vs red under tritan) sit on rarely-adjacent tokens and are reinforced with weight and italics (bold keywords, italic types and comments). Run scripts/cvd_check.py for the full table.",
+    "rules": [
+      "Amber fills on the sea use flame with dark iron text (ember on sea is below 3:1).",
+      "Fire-rare is an identity-tier rule; the code tier follows accessibility-first syntax logic with fire on keywords.",
+      "Borders are deliberately faint; lift only if visible separators are wanted."
+    ]
+  },
+  "notes": "0.5.0 re-founds the system on a closer reading of chapter 96: the steady light is the guide, the fire is the rare and dangerous mark. Scarcity becomes an ethic, not a layout rule; the code exception is named; conviviality and provisionality are stated in FOUNDATIONS.md. Colours and surfaces unchanged from 0.4.0.",
+  "typography": {
+    "note": "Roles, not just sizes. Fraunces carries the headings (display down to subhead) for character; Literata carries the long-form body for lower-contrast reading. Optical size tracks point size per face; WONK and SOFT are Fraunces display-only; leading, tracking, figures, and measure are bound per role.",
+    "fonts": {
+      "serif": {
+        "family": "Fraunces",
+        "axes": {
+          "opsz": [
+            9,
+            144
+          ],
+          "wght": [
+            100,
+            900
+          ],
+          "SOFT": [
+            0,
+            100
+          ],
+          "WONK": [
+            0,
+            1
+          ]
+        }
+      },
+      "sans": {
+        "family": "Archivo",
+        "axes": {
+          "wdth": [
+            62,
+            125
+          ],
+          "wght": [
+            100,
+            900
+          ]
+        }
+      },
+      "mono": {
+        "family": "JetBrains Mono",
+        "axes": {
+          "wght": [
+            100,
+            800
+          ]
+        }
+      },
+      "reading": {
+        "family": "Literata",
+        "license": "OFL",
+        "axes": {
+          "opsz": [
+            7,
+            72
+          ],
+          "wght": [
+            200,
+            900
+          ]
+        },
+        "note": "Body face. Lower-contrast workhorse for long-form reading (measured contrast 1.67 vs Fraunces 2.60, larger x-height)."
+      }
+    },
+    "fluid": {
+      "min-vw": 22,
+      "max-vw": 80
+    },
+    "measure": {
+      "body": "68ch",
+      "narrow": "54ch",
+      "wide": "74ch"
+    },
+    "features": {
+      "text": "\"kern\" 1, \"liga\" 1, \"onum\" 1, \"pnum\" 1",
+      "tabular": "\"kern\" 1, \"lnum\" 1, \"tnum\" 1",
+      "display": "\"kern\" 1, \"liga\" 1, \"dlig\" 1",
+      "code": "\"liga\" 1, \"calt\" 1"
+    },
+    "roles": {
+      "display": {
+        "font": "serif",
+        "fluid": [
+          2.75,
+          4.25
+        ],
+        "weight": 580,
+        "opsz": 144,
+        "wonk": 1,
+        "soft": 30,
+        "leading": 1.0,
+        "tracking": "-0.022em",
+        "features": "display",
+        "measure": "narrow",
+        "wrap": "balance"
+      },
+      "headline": {
+        "font": "serif",
+        "fluid": [
+          2.0,
+          3.0
+        ],
+        "weight": 600,
+        "opsz": 96,
+        "wonk": 1,
+        "soft": 15,
+        "leading": 1.05,
+        "tracking": "-0.015em",
+        "features": "display",
+        "wrap": "balance"
+      },
+      "title": {
+        "font": "serif",
+        "size": "1.602rem",
+        "weight": 600,
+        "opsz": 60,
+        "wonk": 1,
+        "soft": 0,
+        "leading": 1.12,
+        "tracking": "-0.01em",
+        "wrap": "balance"
+      },
+      "subhead": {
+        "font": "serif",
+        "size": "1.281rem",
+        "weight": 600,
+        "opsz": 32,
+        "wonk": 0,
+        "soft": 0,
+        "leading": 1.2,
+        "wrap": "balance"
+      },
+      "body-lg": {
+        "font": "reading",
+        "size": "1.125rem",
+        "weight": 400,
+        "opsz": 12,
+        "wonk": 0,
+        "soft": 0,
+        "leading": 1.6,
+        "tracking": "0",
+        "features": "text",
+        "measure": "body",
+        "wrap": "pretty"
+      },
+      "body": {
+        "font": "reading",
+        "size": "1rem",
+        "weight": 400,
+        "opsz": 10,
+        "wonk": 0,
+        "soft": 0,
+        "leading": 1.62,
+        "tracking": "0",
+        "features": "text",
+        "measure": "body",
+        "wrap": "pretty"
+      },
+      "caption": {
+        "font": "sans",
+        "size": "0.8rem",
+        "weight": 400,
+        "leading": 1.45,
+        "tracking": "0.005em",
+        "features": "text",
+        "measure": "narrow"
+      },
+      "eyebrow": {
+        "font": "mono",
+        "size": "0.75rem",
+        "weight": 500,
+        "leading": 1.2,
+        "tracking": "0.18em",
+        "transform": "uppercase"
+      },
+      "data": {
+        "font": "sans",
+        "size": "0.95rem",
+        "weight": 450,
+        "leading": 1.5,
+        "features": "tabular"
+      },
+      "code": {
+        "font": "mono",
+        "size": "0.9rem",
+        "weight": 400,
+        "leading": 1.55,
+        "features": "code"
+      }
+    }
+  },
+  "gamut": {
+    "note": "Wide-gamut fire for P3 displays, chroma boosted ~18% in OKLab, clamped to P3. sRGB hexes are the fallback.",
+    "p3": {
+      "lit": {
+        "accent": "color(display-p3 0.7725 0.3891 0.0719)",
+        "accent-bright": "color(display-p3 0.8631 0.5088 0.1277)"
+      },
+      "cold": {
+        "accent": "color(display-p3 0.6072 0.3085 0.0602)",
+        "accent-bright": "color(display-p3 0.7073 0.3667 0.0746)"
+      }
+    }
+  },
+  "colorspace": "Hues authored in sRGB and audited in OKLCH. The sea ramp is hue-consistent (~220) with even lightness steps; the fire sits near OKLCH hue 50-59.",
+  "i18n": {
+    "unicode-range": "U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122",
+    "note": "Verified to cover European Portuguese including guillemets (\u00ab \u00bb), ordinals (\u00ba \u00aa), the travess\u00e3o (\u2014), curly quotes, and the euro (\u20ac, added after the audit). Set lang='pt' so localized forms and accented uppercasing apply. Body is ragged-right; no web justification.",
+    "quotes": "pt uses guillemets first, curly second"
+  },
+  "dataviz": {
+    "note": "Categorical prioritises colour-blind discriminability over brand: Okabe-Ito, min deutan \u0394E 0.075 vs 0.033 for a brand-tinted set. Sequential and diverging stay brand (teal, teal-amber), the CVD-safe axis. Magnitude scales encode value, so brand hue is free there.",
+    "categorical": {
+      "name": "Okabe-Ito (CVD-safe), brand-led",
+      "colors": [
+        "#E69F00",
+        "#0072B2",
+        "#009E73",
+        "#CC79A7",
+        "#D55E00",
+        "#56B4E9",
+        "#F0E442"
+      ]
+    },
+    "sequential": {
+      "name": "teal, perceptually uniform (even OKLCH lightness)",
+      "colors": [
+        "#e4f5fb",
+        "#b3e0ee",
+        "#7ec4d7",
+        "#48a0b7",
+        "#0a7b93",
+        "#00576c",
+        "#003542"
+      ]
+    },
+    "diverging": {
+      "name": "teal-amber, pale centre",
+      "colors": [
+        "#00576e",
+        "#287d93",
+        "#72a9b4",
+        "#bbd7d9",
+        "#f1eee6",
+        "#e7ccae",
+        "#da9b6a",
+        "#c26d32",
+        "#984a1a"
+      ]
+    },
+    "plot": {
+      "light": {
+        "bg": "#ffffff",
+        "panel": "#ffffff",
+        "text": "#18272b",
+        "grid": "#dce5e1",
+        "muted": "#52646a",
+        "accent": "#9e5017"
+      },
+      "dark": {
+        "bg": "#12161b",
+        "panel": "#12161b",
+        "text": "#f1efe9",
+        "grid": "#2c3640",
+        "muted": "#97a0a4",
+        "accent": "#c9651d"
+      }
+    },
+    "fonts": {
+      "base": "Archivo",
+      "title": "Fraunces",
+      "mono": "JetBrains Mono"
+    },
+    "shapes": {
+      "name": "markers paired with the categorical scale",
+      "matplotlib": [
+        "o",
+        "s",
+        "^",
+        "D",
+        "v",
+        "P",
+        "X"
+      ],
+      "ggplot_pch": [
+        16,
+        15,
+        17,
+        18,
+        25,
+        3,
+        4
+      ],
+      "linetypes": [
+        "solid",
+        "dashed",
+        "dotted",
+        "dashdot",
+        "longdash",
+        "twodash",
+        "12"
+      ]
+    }
+  },
+  "print": {
+    "note": "These CMYK values are uncalibrated starting points from a naive separation. Proof against a physical swatch before a print run; the printer's RIP and ICC profile are authoritative.",
+    "profile": "PSO Coated v3 (FOGRA51) for coated stock; FOGRA39 where v3 is unavailable.",
+    "ink_limit": "300% total area coverage (FOGRA51). Keep the dark sea and rich black under it.",
+    "rich_black": {
+      "recipe": "C70 M50 Y40 K100",
+      "note": "Cool rich black that reads like pitch. Use plain K for text below ~24 pt to avoid registration fringing."
+    },
+    "cmyk": {
+      "pitch": "C33 M19 Y0 K89",
+      "whale": "C0 M1 Y3 K5",
+      "ember": "C0 M50 Y86 K21",
+      "flame": "C0 M42 Y81 K12",
+      "oil": "C0 M52 Y86 K40",
+      "sea-deep": "C55 M18 Y0 K83",
+      "sea": "C47 M12 Y0 K67",
+      "sea-bright": "C40 M8 Y0 K50",
+      "sea-pale": "C24 M4 Y0 K26",
+      "paper": "C4 M0 Y1 K9",
+      "ink": "C44 M9 Y0 K83",
+      "cold-accent": "C0 M49 Y85 K38"
+    },
+    "gamut_risk": [
+      "sea-bright",
+      "sea-pale",
+      "data-viz blue #0072B2",
+      "data-viz green #009E73",
+      "data-viz violet #CC79A7"
+    ],
+    "spot": "If the brand fire must match exactly, run it as a burnt-orange spot (Pantone 1595 C region) and confirm on a swatch book. The amber otherwise reproduces well in process.",
+    "bleed_mm": 3,
+    "safe_mm": 5,
+    "sizes_mm": {
+      "A3": "297x420",
+      "A2": "420x594",
+      "A1": "594x841",
+      "A0": "841x1189"
+    }
+  },
+  "a11y": {
+    "note": "Beyond body contrast: visible focus, forced-colors support, a higher-contrast path, and a reduced-transparency path. All emitted to css/a11y.css.",
+    "focus": {
+      "lit": "#e0832a",
+      "cold": "#9e5017",
+      "width": "2px",
+      "offset": "2px"
+    },
+    "contrast_more": {
+      "lit": {
+        "text-muted": "#9ba3a7",
+        "border": "#5f666c"
+      },
+      "cold": {
+        "text-muted": "#3c4d52",
+        "border": "#758382"
+      }
+    }
+  },
+  "performance": {
+    "note": "Subset to i18n.unicode-range as woff2 (total 404K vs 811K full, ~50% off; above-fold Fraunces+Literata 276K). Metric-matched fallbacks below remove swap layout shift.",
+    "subset_range_ref": "i18n.unicode-range",
+    "payload_kb": {
+      "Fraunces": 121,
+      "Literata": 155,
+      "Archivo": 88,
+      "JetBrainsMono": 38,
+      "total": 404
+    },
+    "fallbacks": {
+      "Fraunces": {
+        "fallback": "Georgia",
+        "size_adjust": 114.63,
+        "ascent": 85.32,
+        "descent": 22.24,
+        "line_gap": 0.0
+      },
+      "Literata": {
+        "fallback": "Georgia",
+        "size_adjust": 115.81,
+        "ascent": 101.63,
+        "descent": 26.59,
+        "line_gap": 0.0
+      },
+      "Archivo": {
+        "fallback": "Arial",
+        "size_adjust": 130.27,
+        "ascent": 67.4,
+        "descent": 16.12,
+        "line_gap": 0.0
+      },
+      "JetBrains Mono": {
+        "fallback": "Courier New",
+        "size_adjust": 100.32,
+        "ascent": 101.68,
+        "descent": 29.91,
+        "line_gap": 0.0
+      }
+    }
+  },
+  "motion": {
+    "note": "Motion marks a change; it does not decorate. Durations are short, eases are quiet, and prefers-reduced-motion collapses them.",
+    "durations": {
+      "fast": "120ms",
+      "base": "200ms",
+      "slow": "320ms",
+      "slower": "480ms"
+    },
+    "easings": {
+      "standard": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "out": "cubic-bezier(0, 0, 0.2, 1)",
+      "in": "cubic-bezier(0.4, 0, 1, 1)",
+      "emphasized": "cubic-bezier(0.2, 0, 0, 1)"
+    }
+  },
+  "brand": {
+    "essence": "The fire is the one hot mark on a cold field.",
+    "tagline": "Steer by the steady light, not the fire.",
+    "family": {
+      "pequod": "read-first code palette, a sibling tuned for editors",
+      "try-works": "the broader identity, the deck furnace where the work is rendered"
+    },
+    "mark": {
+      "primary": "wordmark, Fraunces display with WONK on",
+      "emblem": "assets/logo.svg (lit), assets/logo-cold.svg"
+    },
+    "note": "Type-forward by choice; see BRAND.md."
+  },
+  "product": {
+    "audience": "an academic-maker shipping web, slides, posters, code, and statistical plots in R, Python, Quarto, Typst, 11ty; Moby-Dick aesthetic",
+    "tiers": {
+      "core": [
+        "r",
+        "python",
+        "typst slides",
+        "css",
+        "web (11ty)",
+        "vscode",
+        "tailwind",
+        "obsidian",
+        "ghostty terminal",
+        "quarto"
+      ],
+      "maintained": [
+        "typst poster",
+        "print"
+      ],
+      "confirm": []
+    },
+    "top_gap": "none; Quarto closed the last gap in 0.19.0.",
+    "scope": "1.0 released; the public surface is frozen and semver applies.",
+    "note": "See PRODUCT.md."
+  }
+}

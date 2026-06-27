@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Try-Works — motion</title><style>
+:root{ --bg:#12161b;--surface:#1b2127;--text:#f1efe9;--muted:#97a0a4;--accent:#c9651d;--accentb:#e0832a;--border:#2c3640;
+ --mono:"JetBrains Mono",ui-monospace,monospace; --dur:1400ms; }
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;padding:40px}
+.k{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:Georgia,serif;font-weight:600;font-size:30px;margin:6px 0 4px}
+.sub{color:var(--muted);max-width:60ch;font-size:14px;line-height:1.6}
+.tracks{margin-top:30px;max-width:760px}
+.track{padding:16px 0;border-top:1px solid var(--border)}
+.meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:10px}
+.nm{color:var(--accentb)} .cv{color:var(--muted)}
+.rail{position:relative;height:10px;background:var(--surface);border-radius:6px}
+.dot{position:absolute;top:-3px;left:0;width:16px;height:16px;border-radius:50%;background:var(--accent);
+ animation:run var(--dur) infinite alternate}
+@keyframes run{from{left:0} to{left:calc(100% - 16px)}}
+.chips{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:12px;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px}
+.note{margin-top:26px;font-family:var(--mono);font-size:11px;color:var(--muted);border-left:2px solid var(--accent);padding-left:10px}
+@media (prefers-reduced-motion: reduce){ .dot{animation:none;left:calc(100% - 16px)} }
+</style></head><body>
+<span class="k">Try-Works · motion</span>
+<h1>Restrained by intent</h1>
+<p class="sub">Motion marks a change; it does not decorate. Four eases, four durations. The dots run continuously here only to show the curves; in use, motion is brief and rare, like the fire.</p>
+<div class="tracks"><div class="track">
+      <div class="meta"><span class="nm">standard</span><span class="cv">cubic-bezier(0.4, 0, 0.2, 1)</span></div>
+      <div class="rail"><span class="dot" style="animation-timing-function:cubic-bezier(0.4, 0, 0.2, 1)"></span></div>
+    </div><div class="track">
+      <div class="meta"><span class="nm">out</span><span class="cv">cubic-bezier(0, 0, 0.2, 1)</span></div>
+      <div class="rail"><span class="dot" style="animation-timing-function:cubic-bezier(0, 0, 0.2, 1)"></span></div>
+    </div><div class="track">
+      <div class="meta"><span class="nm">in</span><span class="cv">cubic-bezier(0.4, 0, 1, 1)</span></div>
+      <div class="rail"><span class="dot" style="animation-timing-function:cubic-bezier(0.4, 0, 1, 1)"></span></div>
+    </div><div class="track">
+      <div class="meta"><span class="nm">emphasized</span><span class="cv">cubic-bezier(0.2, 0, 0, 1)</span></div>
+      <div class="rail"><span class="dot" style="animation-timing-function:cubic-bezier(0.2, 0, 0, 1)"></span></div>
+    </div></div>
+<div class="chips"><span class="chip">fast · 120ms</span><span class="chip">base · 200ms</span><span class="chip">slow · 320ms</span><span class="chip">slower · 480ms</span></div>
+<p class="note">This page honours prefers-reduced-motion: with it on, the dots rest at the end and nothing animates.</p>
+</body></html>

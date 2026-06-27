@@ -1,0 +1,54 @@
+/* Try-Works for Obsidian. Generated from try-works.json. */
+body {
+  --font-text-theme: "Fraunces", Georgia, serif;
+  --font-interface-theme: "Archivo", system-ui, sans-serif;
+  --font-monospace-theme: "JetBrains Mono", ui-monospace, monospace;
+}
+
+.theme-dark {
+  --accent-h: 25; --accent-s: 75%; --accent-l: 45%;
+  --background-primary: #12161b;
+  --background-secondary: #1b2127;
+  --background-secondary-alt: #232b32;
+  --background-modifier-border: #2c3640;
+  --background-modifier-hover: #4d76801f;
+  --text-normal: #f1efe9;
+  --text-muted: #97a0a4;
+  --text-accent: #c9651d;
+  --text-accent-hover: #e0832a;
+  --text-on-accent: #11151a;
+  --interactive-accent: #c9651d;
+  --interactive-accent-hover: #e0832a;
+  --link-color: #c9651d;
+  --hr-color: #2c3640;
+  --blockquote-border-color: #c9651d;
+  --code-background: #1b2127;
+  --tag-color: #c9651d;
+  --tag-background: #c9651d1f;
+}
+
+.theme-light {
+  --accent-h: 25; --accent-s: 75%; --accent-l: 35%;
+  --background-primary: #dee7e4;
+  --background-secondary: #e7efeb;
+  --background-secondary-alt: #f2f7f4;
+  --background-modifier-border: #c4d2cd;
+  --background-modifier-hover: #3d6b761f;
+  --text-normal: #18272b;
+  --text-muted: #52646a;
+  --text-accent: #9e5017;
+  --text-accent-hover: #b85f1c;
+  --text-on-accent: #eef3f0;
+  --interactive-accent: #9e5017;
+  --interactive-accent-hover: #b85f1c;
+  --link-color: #9e5017;
+  --hr-color: #c4d2cd;
+  --blockquote-border-color: #9e5017;
+  --code-background: #e7efeb;
+  --tag-color: #9e5017;
+  --tag-background: #9e50171f;
+}
+
+.markdown-rendered h1, .inline-title { font-family: var(--font-text); font-variation-settings: "opsz" 96, "wght" 600, "WONK" 1; }
+.markdown-rendered h2 { font-family: var(--font-text); font-variation-settings: "opsz" 60, "wght" 600, "WONK" 1; }
+.markdown-rendered blockquote { background: var(--background-modifier-hover); border-radius: 0 4px 4px 0; }

@@ -1,0 +1,48 @@
+/* Font loading. font-display: swap; variable axes declared; Latin + euro subset.
+   The range now includes U+20AC after the i18n audit. Subset to this in production. */
+@font-face {
+  font-family: "Fraunces";
+  src: url("/fonts/Fraunces.woff2") format("woff2");
+  font-weight: 100 900; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: "Literata";
+  src: url("/fonts/Literata.woff2") format("woff2");
+  font-weight: 200 900; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: "Archivo";
+  src: url("/fonts/Archivo.woff2") format("woff2");
+  font-weight: 100 900; font-stretch: 62% 125%; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono.woff2") format("woff2");
+  font-weight: 100 800; font-style: normal; font-display: swap;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--tw-bg); color: var(--tw-text);
+  font-family: var(--tw-font-reading); font-size: 1rem; line-height: var(--tw-leading-normal);
+  font-variation-settings: "opsz" 10, "wght" 400;
+  font-variant-numeric: oldstyle-nums proportional-nums;
+  text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
+}
+/* European Portuguese: guillemets first, curly second. Requires lang="pt". */
+:lang(pt) { quotes: "\00AB" "\00BB" "\201C" "\201D"; }
+q::before { content: open-quote; } q::after { content: close-quote; }
+
+.wrap { max-inline-size: 60rem; margin-inline: auto; padding-inline: var(--tw-space-6); }
+.prose > * + * { margin-block-start: var(--tw-space-4); }
+section { padding-block: var(--tw-space-16); border-block-end: var(--tw-border) solid var(--tw-border); }
+.hero { background: var(--tw-sea-deep); border-block-end: var(--tw-border) solid var(--tw-border); padding-block: var(--tw-space-20) var(--tw-space-16); position: relative; overflow: hidden; }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, color-mix(in srgb, var(--tw-accent) 38%, transparent) 100%); pointer-events: none; }
+.hero .wrap { position: relative; }
+.hero .tw-eyebrow { color: var(--tw-accent-bright); margin-block: 0 var(--tw-space-4); }
+.hero .tw-display { color: #f1efe9; margin: 0; }
+.hero .tw-body-lg { color: #e7e9e4; margin-block-start: var(--tw-space-5); }
+.btn { font-family: var(--tw-font-mono); font-size: var(--tw-text-sm); letter-spacing: 0.12em; text-transform: uppercase; background: var(--tw-accent); color: var(--tw-on-accent); border: 0; border-radius: var(--tw-radius-sm); padding-block: var(--tw-space-3); padding-inline: var(--tw-space-5); cursor: pointer; }

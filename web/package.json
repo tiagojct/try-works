@@ -1,0 +1,12 @@
+{
+  "name": "try-works-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "serve": "eleventy --serve",
+    "build": "eleventy"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}

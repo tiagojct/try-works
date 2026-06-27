@@ -1,0 +1,20 @@
+---
+title: "Try-Works for Quarto"
+subtitle: "Fraunces headings, Literata body, the fire as the one accent"
+---
+
+## A heading in Fraunces
+
+Body text renders in Literata for sustained reading, with oldstyle figures
+like 1851 and 1,234.56 sitting naturally in the line. Links carry the
+[fire accent](https://example.org). The measure stays comfortable.
+
+> A blockquote takes the fire on its leading edge.
+
+```r
+midas |>
+  dplyr::summarise(mean_fev1 = mean(fev1, na.rm = TRUE))  # comment in gull
+```
+
+The same document renders to PDF through Typst with the brand preamble, so
+headings, body, links, and code stay on system.

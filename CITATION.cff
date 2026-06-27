@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use Try-Works, please cite it."
+title: "Try-Works: a Moby-Dick design system"
+authors:
+  - family-names: Jacinto
+    given-names: Tiago
+version: 1.0.0
+date-released: 2026-06-27
+license: "MIT AND CC-BY-4.0"
+repository-code: "https://github.com/tiagojct/try-works"
+url: "https://tiagojct.eu"
+keywords:
+  - design system
+  - design tokens
+  - colour
+  - typography

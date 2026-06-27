@@ -1,0 +1,33 @@
+/* Generated metric-matched fallbacks. local() fallback with overrides so the swap does not shift text. */
+@font-face {
+  font-family: "Fraunces fallback";
+  src: local("Georgia");
+  size-adjust: 114.63%;
+  ascent-override: 85.32%;
+  descent-override: 22.24%;
+  line-gap-override: 0.0%;
+}
+@font-face {
+  font-family: "Literata fallback";
+  src: local("Georgia");
+  size-adjust: 115.81%;
+  ascent-override: 101.63%;
+  descent-override: 26.59%;
+  line-gap-override: 0.0%;
+}
+@font-face {
+  font-family: "Archivo fallback";
+  src: local("Arial");
+  size-adjust: 130.27%;
+  ascent-override: 67.4%;
+  descent-override: 16.12%;
+  line-gap-override: 0.0%;
+}
+@font-face {
+  font-family: "JetBrains Mono fallback";
+  src: local("Courier New");
+  size-adjust: 100.32%;
+  ascent-override: 101.68%;
+  descent-override: 29.91%;
+  line-gap-override: 0.0%;
+}

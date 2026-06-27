@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#14242c"/>
+  <rect x="0" y="0" width="1200" height="160" fill="#12161b"/>
+  <rect x="0" y="470" width="1200" height="160" fill="#2c4953"/>
+  <rect x="0" y="455" width="1200" height="16" fill="#cd7a2c"/>
+  <g font-family="Georgia, serif" fill="#f1efe9">
+    <text x="80" y="300" font-size="120" font-weight="600">Try-Works</text>
+  </g>
+  <text x="84" y="356" font-family="monospace" font-size="22" letter-spacing="6" fill="#cd7a2c">A MOBY-DICK IDENTITY PALETTE</text>
+  <g>
+    <rect x="80" y="540" width="60" height="40" fill="#14242c"/>
+    <rect x="148" y="540" width="60" height="40" fill="#2c4953"/>
+    <rect x="216" y="540" width="60" height="40" fill="#4d7680"/>
+    <rect x="284" y="540" width="60" height="40" fill="#8fb6bd"/>
+    <rect x="360" y="540" width="60" height="40" fill="#cd7a2c"/>
+    <rect x="428" y="540" width="60" height="40" fill="#f1efe9"/>
+  </g>
+</svg>

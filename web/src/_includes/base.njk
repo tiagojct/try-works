@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt" data-mode="lit">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/Fraunces.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/Literata.woff2" crossorigin>
+  <link rel="stylesheet" href="/css/try-works.css">
+  <link rel="stylesheet" href="/css/typography.css">
+  <link rel="stylesheet" href="/css/p3.css">
+  <link rel="stylesheet" href="/css/a11y.css">
+  <link rel="stylesheet" href="/css/fallbacks.css">
+  <link rel="stylesheet" href="/css/motion.css">
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  {{ content | safe }}
+  <script>
+    const root = document.documentElement;
+    window.toggleMode = () => root.setAttribute("data-mode",
+      root.getAttribute("data-mode") === "lit" ? "cold" : "lit");
+  </script>
+</body>
+</html>

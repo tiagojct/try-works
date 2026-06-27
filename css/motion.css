@@ -1,0 +1,20 @@
+/* Generated motion tokens. Restrained by intent; reduced-motion respected. */
+:root {
+  --tw-duration-fast: 120ms;
+  --tw-duration-base: 200ms;
+  --tw-duration-slow: 320ms;
+  --tw-duration-slower: 480ms;
+  --tw-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --tw-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --tw-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --tw-ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
