@@ -1,6 +1,0 @@
-/* Wide-gamut fire. Generated. Outside P3 the sRGB hexes in try-works.css apply. */
-@media (color-gamut: p3) {
-  :root,
-  [data-mode="lit"] { --tw-accent: color(display-p3 0.7725 0.3891 0.0719); --tw-accent-bright: color(display-p3 0.8631 0.5088 0.1277); }
-  [data-mode="cold"] { --tw-accent: color(display-p3 0.6072 0.3085 0.0602); --tw-accent-bright: color(display-p3 0.7073 0.3667 0.0746); }
-}
