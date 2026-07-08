@@ -1,0 +1,27 @@
+{
+  "name": "try-works-color-theme",
+  "displayName": "Try-Works",
+  "description": "Try-Works, a Moby-Dick palette for code. Dark (lit), tuned for R and Python. Works in VS Code and Positron.",
+  "version": "1.0.0",
+  "publisher": "tiagojct",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tiagojct/try-works"
+  },
+  "contributes": {
+    "themes": [
+      {
+        "label": "Try-Works",
+        "uiTheme": "vs-dark",
+        "path": "./themes/Try-Works-color-theme.json"
+      }
+    ]
+  }
+}

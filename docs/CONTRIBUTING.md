@@ -24,10 +24,10 @@ To change a token: edit try-works.json, then run `make generate`, then
 
 ## Adding a token or a surface
 
-Add the data to try-works.json, then teach scripts/generate.py to emit it in a
-small builder function, register it in `artifacts()`, and add a check to
-scripts/validate.py if it has invariants. Keep builders pure: json in, string
-out.
+Add the data to src/try-works.json, then teach src/scripts/generate.py to emit it
+in a small builder function, register it in `artifacts()` (with a `dist/` output
+path), and add a check to src/scripts/validate.py if it has invariants. Keep
+builders pure: json in, string out.
 
 ## Style of change
 

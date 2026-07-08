@@ -1,0 +1,23 @@
+# Try-Works (True Lamp) — Ghostty theme (light). Generated from try-works.json.
+background = #dee7e4
+foreground = #18272b
+cursor-color = #9e5017
+cursor-text = #eef3f0
+selection-background = #264852
+selection-foreground = #eef3f0
+palette = 0=#1b2127
+palette = 1=#c05a3a
+palette = 2=#6f8f6a
+palette = 3=#c9651d
+palette = 4=#46708a
+palette = 5=#8a6f9e
+palette = 6=#5f97a0
+palette = 7=#c9ccce
+palette = 8=#3a4754
+palette = 9=#d06a52
+palette = 10=#86a87f
+palette = 11=#e0832a
+palette = 12=#5f93b0
+palette = 13=#a487ba
+palette = 14=#8fb6bd
+palette = 15=#f1efe9

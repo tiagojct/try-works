@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="238" viewBox="0 0 720 238">
+  <rect width="720" height="238" rx="8" fill="#12161b"/>
+  <rect x="0" y="0" width="720" height="30" rx="8" fill="#1b2127"/>
+  <text x="360" y="20" text-anchor="middle" font-family="monospace" font-size="12" fill="#97a0a4">Try-Works — R (Positron)</text>
+  <text x="24" y="58" xml:space="preserve" font-family="monospace" font-size="15"><tspan fill="#c9651d" font-weight="700">library</tspan><tspan fill="#8a9296">(tidyverse)</tspan></text>
+  <text x="24" y="84" xml:space="preserve" font-family="monospace" font-size="15"><tspan fill="#97a0a4"># FEV1 by asthma diagnosis</tspan></text>
+  <text x="24" y="110" xml:space="preserve" font-family="monospace" font-size="15"><tspan fill="#f1efe9">midas </tspan><tspan fill="#c9651d">&lt;- </tspan><tspan fill="#5f93b0">read_csv</tspan><tspan fill="#8a9296">(</tspan><tspan fill="#86a87f">"midas_ulsco_TJ_clean.csv"</tspan><tspan fill="#8a9296">)</tspan></text>
+  <text x="24" y="136" xml:space="preserve" font-family="monospace" font-size="15"><tspan fill="#f1efe9">model </tspan><tspan fill="#c9651d">&lt;- </tspan><tspan fill="#f1efe9">midas </tspan><tspan fill="#aeb6b8">|&gt;</tspan></text>
+  <text x="24" y="162" xml:space="preserve" font-family="monospace" font-size="15"><tspan fill="#5f93b0">  filter</tspan><tspan fill="#8a9296">(!</tspan><tspan fill="#5f97a0">is.na</tspan><tspan fill="#f1efe9">(fev1)) </tspan><tspan fill="#aeb6b8">|&gt;</tspan></text>
+  <text x="24" y="188" xml:space="preserve" font-family="monospace" font-size="15"><tspan fill="#5f93b0">  summarise</tspan><tspan fill="#f1efe9">(n </tspan><tspan fill="#aeb6b8">= </tspan><tspan fill="#5f97a0">n</tspan><tspan fill="#f1efe9">(), mean </tspan><tspan fill="#aeb6b8">= </tspan><tspan fill="#5f97a0">mean</tspan><tspan fill="#8a9296">(fev1))</tspan></text>
+</svg>

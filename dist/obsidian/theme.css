@@ -1,0 +1,592 @@
+/* @settings
+name: Try-Works
+id: try-works
+settings:
+  - id: tw-typography
+    title: Typography
+    type: heading
+    level: 1
+    collapsed: false
+  - id: text-accent
+    title: Accent color
+    description: The one warm mark. Defaults follow Try-Fire/True Lamp.
+    type: variable-themed-color
+    format: hex
+    default-light: "#9e5017"
+    default-dark: "#c9651d"
+  - id: tw-body-scale
+    title: Body text size
+    description: Multiplier on editor/reading font size (theme default 1.2x).
+    type: variable-number-slider
+    default: 1.2
+    min: 0.9
+    max: 1.4
+    step: 0.02
+  - id: line-height-normal
+    title: Line height
+    description: Paragraph line spacing (theme default 1.7).
+    type: variable-number-slider
+    default: 1.7
+    min: 1.4
+    max: 2.0
+    step: 0.05
+  - id: tw-headings-serif
+    title: Serif headings (Fraunces)
+    description: Off (default) keeps Try-Works' sans (Archivo) headings.
+    type: class-toggle
+    default: false
+  - id: tw-body-sans
+    title: Sans body text (Archivo)
+    description: Off (default) keeps Try-Works' serif (Fraunces) note body.
+    type: class-toggle
+    default: false
+  - id: tw-explorer-truncate
+    title: Truncate file names (Obsidian default)
+    description: Off (default) keeps Try-Works' wrapped file-explorer labels.
+    type: class-toggle
+    default: false
+*/
+/* Try-Works for Obsidian. Generated from try-works.json. */
+/* Popover (Components/Popover): Obsidian exposes no colour variables here (verified docs.obsidian.md); nothing to set. */
+body {
+  --tw-font-serif: "Fraunces", Georgia, serif;
+  --tw-font-sans: "Archivo", system-ui, sans-serif;
+  --tw-font-mono: "JetBrains Mono", ui-monospace, monospace;
+  /* Literal stacks here, not var(--tw-font-*): these three are Obsidian's own theme-level
+     font hooks, unlike every other font-family reference below which is an ordinary CSS
+     property on a selector we wrote. Keeping them literal matches the one arrangement
+     already proven to work this session (the original Georgia-fallback diagnosis). */
+  --font-text-theme: "Fraunces", Georgia, serif;
+  --font-interface-theme: "Archivo", system-ui, sans-serif;
+  --font-monospace-theme: "JetBrains Mono", ui-monospace, monospace;
+  --nav-item-white-space: normal;
+  --line-height-normal: 1.7;
+  --p-spacing: 1.35em;
+}
+
+.theme-dark {
+  --accent-h: 25; --accent-s: 75%; --accent-l: 45%;
+  --color-base-00: #12161b;
+  --color-base-05: #161c21;
+  --color-base-10: #1b2127;
+  --color-base-20: #232b32;
+  --color-base-25: #283039;
+  --color-base-30: #2c3640;
+  --color-base-35: #384c56;
+  --color-base-40: #405c66;
+  --color-base-50: #6e8990;
+  --color-base-60: #97a0a4;
+  --color-base-70: #bbc0c0;
+  --color-base-100: #f1efe9;
+  --color-red: #d06a52;
+  --color-red-rgb: 208, 106, 82;
+  --color-orange: #c9651d;
+  --color-orange-rgb: 201, 101, 29;
+  --color-yellow: #e0832a;
+  --color-yellow-rgb: 224, 131, 42;
+  --color-green: #86a87f;
+  --color-green-rgb: 134, 168, 127;
+  --color-cyan: #5f97a0;
+  --color-cyan-rgb: 95, 151, 160;
+  --color-blue: #5f93b0;
+  --color-blue-rgb: 95, 147, 176;
+  --color-purple: #a487ba;
+  --color-purple-rgb: 164, 135, 186;
+  --color-pink: #ba7886;
+  --color-pink-rgb: 186, 120, 134;
+  --background-primary: #12161b;
+  --background-primary-alt: #1b2127;
+  --background-secondary: #12161b;
+  --background-secondary-alt: #232b32;
+  --background-modifier-border: #2c3640;
+  --background-modifier-border-hover: #4c565e;
+  --background-modifier-border-focus: #c9651d;
+  --background-modifier-hover: #4d76801f;
+  --footnote-input-background: #12161b;
+  --footnote-input-background-active: #12161b;
+  --blockquote-background-color: #4d76801f;
+  --background-modifier-active-hover: #4d768033;
+  --background-modifier-form-field: #1b2127;
+  --background-modifier-success: rgba(134, 168, 127, 0.15);
+  --text-normal: #f1efe9;
+  --text-muted: #97a0a4;
+  --text-faint: #62696d;
+  --text-on-accent: #11151a;
+  --text-on-accent-inverted: #f1efe9;
+  --text-accent: #c9651d;
+  --text-accent-hover: #e0832a;
+  --text-error: #d06a52;
+  --text-selection: #4d768044;
+  --text-highlight-bg: rgba(224, 131, 42, 0.4);
+  --text-highlight-bg-active: rgba(201, 101, 29, 0.6);
+  --interactive-normal: #1b2127;
+  --interactive-hover: #232b32;
+  --interactive-accent: var(--text-accent);
+  --interactive-accent-hover: #e0832a;
+  --link-color: var(--text-accent);
+  --link-color-hover: #e0832a;
+  --link-decoration: underline;
+  --link-decoration-hover: underline;
+  --link-decoration-thickness: 0.07em;
+  --link-unresolved-color: #97a0a4;
+  --link-unresolved-opacity: 0.7;
+  --link-unresolved-decoration-style: dashed;
+  --link-unresolved-decoration-color: #97a0a4;
+  --link-external-color: var(--text-accent);
+  --link-external-color-hover: #e0832a;
+  --link-external-decoration: underline;
+  --code-background: #1b2127;
+  --code-white-space: pre-wrap;
+  --code-normal: #f1efe9;
+  --code-comment: #97a0a4;
+  --code-keyword: #c9651d;
+  --code-string: #86a87f;
+  --code-value: #a487ba;
+  --code-function: #5f93b0;
+  --code-tag: #5f97a0;
+  --code-important: #d06a52;
+  --code-property: #d2d3d1;
+  --code-operator: #97a0a4;
+  --code-punctuation: #97a0a4;
+  --blockquote-border-color: var(--text-accent);
+  --blockquote-color: #97a0a4;
+  --hr-color: #2c3640;
+  --divider-color: #2c3640;
+  --tag-color: var(--text-accent);
+  --tag-color-hover: #e0832a;
+  --tag-background: #c9651d1f;
+  --tag-background-hover: #c9651d33;
+  --tag-border-color: transparent;
+  --tag-border-color-hover: #c9651d55;
+  --checkbox-color: var(--text-accent);
+  --checkbox-color-hover: #e0832a;
+  --checkbox-marker-color: #11151a;
+  --checkbox-border-color: #2c3640;
+  --checkbox-border-color-hover: var(--text-accent);
+  --checklist-done-color: #97a0a4;
+  --pill-color: #f1efe9;
+  --pill-color-hover: #f1efe9;
+  --pill-color-remove: #97a0a4;
+  --pill-color-remove-hover: #d06a52;
+  --pill-background: transparent;
+  --pill-background-hover: #4d768033;
+  --pill-border-color: transparent;
+  --pill-border-color-hover: var(--text-accent);
+  --list-marker-color: #97a0a4;
+  --list-marker-color-hover: var(--text-accent);
+  --list-marker-color-collapsed: #97a0a4;
+  --nav-item-color: #97a0a4;
+  --nav-item-color-hover: #f1efe9;
+  --nav-item-color-active: #f1efe9;
+  --nav-item-background-hover: #4d76801f;
+  --nav-item-background-active: #4d768033;
+  --tab-background-active: #12161b;
+  --tab-text-color: #97a0a4;
+  --tab-text-color-active: #f1efe9;
+  --tab-text-color-focused-active-current: #f1efe9;
+  --tab-container-background: #1b2127;
+  --tab-divider-color: #2c3640;
+  --tab-outline-color: var(--text-accent);
+  --titlebar-background: #12161b;
+  --titlebar-background-focused: #1b2127;
+  --titlebar-text-color: #97a0a4;
+  --titlebar-text-color-focused: #f1efe9;
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb-bg: #4d768040;
+  --scrollbar-active-thumb-bg: #4d768066;
+  --table-background: #1b2127;
+  --table-border-color: #2c3640;
+  --table-row-alt-background: #1b2127;
+  --table-row-background-hover: #4d768014;
+  --table-selection: #c9651d22;
+  --table-selection-border-color: var(--text-accent);
+  --table-header-background: #232b32;
+  --table-header-background-hover: #4d768033;
+  --table-header-border-color: #2c3640;
+  --table-header-color: #f1efe9;
+  --table-text-color: #f1efe9;
+  --table-drag-handle-background: #232b32;
+  --table-drag-handle-background-active: var(--text-accent);
+  --table-drag-handle-color: #97a0a4;
+  --table-drag-handle-color-active: #11151a;
+  --ribbon-background: #12161b;
+  --ribbon-background-collapsed: #12161b;
+  --status-bar-background: #1b2127;
+  --status-bar-border-color: #2c3640;
+  --status-bar-text-color: #97a0a4;
+  --modal-background: #1b2127;
+  --modal-border-color: #2c3640;
+  --icon-color: #97a0a4;
+  --icon-color-hover: #f1efe9;
+  --icon-color-active: var(--text-accent);
+  --icon-color-focused: var(--text-accent);
+  --search-clear-button-color: #97a0a4;
+  --search-icon-color: #97a0a4;
+  --search-result-background: #1b2127;
+  --embed-background: #1b2127;
+  --embed-border-start: 4px solid var(--text-accent);
+  --embed-block-shadow-hover: 0 2px 10px rgba(77, 118, 128, 0.25);
+  --inline-title-color: #f1efe9;
+  --inline-title-font: var(--tw-font-sans);
+  --divider-color-hover: var(--text-accent);
+  --divider-width-hover: 2px;
+  --callout-info: #5f93b0;
+  --callout-todo: #5f93b0;
+  --callout-tip: #5f97a0;
+  --callout-success: #86a87f;
+  --callout-question: #a487ba;
+  --callout-example: #a487ba;
+  --callout-error: #d06a52;
+  --callout-fail: #d06a52;
+  --callout-bug: #ba7886;
+  --callout-warning: #e0832a;
+  --callout-summary: #c9651d;
+  --callout-important: #c9651d;
+  --callout-quote: var(--text-muted);
+  --callout-default: var(--text-muted);
+  --graph-line: #2c3640;
+  --graph-text: #97a0a4;
+  --graph-node: #4d7680;
+  --graph-node-unresolved: #62696d;
+  --graph-node-focused: #e0832a;
+  --graph-node-tag: #5f93b0;
+  --graph-node-attachment: #5f97a0;
+  --canvas-background: #12161b;
+  --canvas-card-label-color: #97a0a4;
+  --canvas-dot-pattern: #2c3640;
+  --canvas-color-1: #d06a52;
+  --canvas-color-2: #c9651d;
+  --canvas-color-3: #e0832a;
+  --canvas-color-4: #86a87f;
+  --canvas-color-5: #5f97a0;
+  --canvas-color-6: #a487ba;
+  --metadata-background: #12161b;
+  --metadata-border-color: #2c3640;
+  --metadata-divider-color: #2c3640;
+  --metadata-gap: 1px;
+  --metadata-input-height: calc(var(--font-text-size) * 1.4);
+  --metadata-label-text-color: #97a0a4;
+  --metadata-label-text-color-hover: #f1efe9;
+  --metadata-label-font-size: 0.75em;
+  --metadata-input-font-size: 0.75em;
+  --metadata-sidebar-label-font-size: 0.75em;
+  --metadata-sidebar-input-font-size: 0.75em;
+  --metadata-input-text-color: #f1efe9;
+  --metadata-input-background: #12161b;
+  --metadata-input-background-hover: #1b2127;
+  --metadata-property-background: #12161b;
+  --metadata-property-background-hover: #1b2127;
+  --metadata-property-background-active: #4d768033;
+}
+
+.theme-light {
+  --accent-h: 25; --accent-s: 75%; --accent-l: 35%;
+  --color-base-00: #dee7e4;
+  --color-base-05: #d8e2de;
+  --color-base-10: #d1dcd8;
+  --color-base-20: #c4d2cd;
+  --color-base-25: #adbcb9;
+  --color-base-30: #9cacaa;
+  --color-base-35: #8b9b9c;
+  --color-base-40: #7a8a8d;
+  --color-base-50: #637479;
+  --color-base-60: #52646a;
+  --color-base-70: #3b4c51;
+  --color-base-100: #18272b;
+  --color-red: #d06a52;
+  --color-red-rgb: 208, 106, 82;
+  --color-orange: #c9651d;
+  --color-orange-rgb: 201, 101, 29;
+  --color-yellow: #e0832a;
+  --color-yellow-rgb: 224, 131, 42;
+  --color-green: #86a87f;
+  --color-green-rgb: 134, 168, 127;
+  --color-cyan: #5f97a0;
+  --color-cyan-rgb: 95, 151, 160;
+  --color-blue: #5f93b0;
+  --color-blue-rgb: 95, 147, 176;
+  --color-purple: #a487ba;
+  --color-purple-rgb: 164, 135, 186;
+  --color-pink: #ba7886;
+  --color-pink-rgb: 186, 120, 134;
+  --background-primary: #dee7e4;
+  --background-primary-alt: #e7efeb;
+  --background-secondary: #dee7e4;
+  --background-secondary-alt: #f2f7f4;
+  --background-modifier-border: #c4d2cd;
+  --background-modifier-border-hover: #a2b1af;
+  --background-modifier-border-focus: #9e5017;
+  --background-modifier-hover: #3d6b761f;
+  --footnote-input-background: #dee7e4;
+  --footnote-input-background-active: #dee7e4;
+  --blockquote-background-color: #3d6b761f;
+  --background-modifier-active-hover: #3d6b7633;
+  --background-modifier-form-field: #e7efeb;
+  --background-modifier-success: rgba(134, 168, 127, 0.15);
+  --text-normal: #18272b;
+  --text-muted: #52646a;
+  --text-faint: #8a989b;
+  --text-on-accent: #eef3f0;
+  --text-on-accent-inverted: #18272b;
+  --text-accent: #9e5017;
+  --text-accent-hover: #b85f1c;
+  --text-error: #d06a52;
+  --text-selection: #3d6b7644;
+  --text-highlight-bg: rgba(224, 131, 42, 0.4);
+  --text-highlight-bg-active: rgba(201, 101, 29, 0.6);
+  --interactive-normal: #e7efeb;
+  --interactive-hover: #f2f7f4;
+  --interactive-accent: var(--text-accent);
+  --interactive-accent-hover: #b85f1c;
+  --link-color: var(--text-accent);
+  --link-color-hover: #b85f1c;
+  --link-decoration: underline;
+  --link-decoration-hover: underline;
+  --link-decoration-thickness: 0.07em;
+  --link-unresolved-color: #52646a;
+  --link-unresolved-opacity: 0.7;
+  --link-unresolved-decoration-style: dashed;
+  --link-unresolved-decoration-color: #52646a;
+  --link-external-color: var(--text-accent);
+  --link-external-color-hover: #b85f1c;
+  --link-external-decoration: underline;
+  --code-background: #e7efeb;
+  --code-white-space: pre-wrap;
+  --code-normal: #18272b;
+  --code-comment: #52646a;
+  --code-keyword: #794923;
+  --code-string: #546e59;
+  --code-value: #655c7a;
+  --code-function: #3f6274;
+  --code-tag: #3f656b;
+  --code-important: #7d4c40;
+  --code-property: #2c3c41;
+  --code-operator: #52646a;
+  --code-punctuation: #52646a;
+  --blockquote-border-color: var(--text-accent);
+  --blockquote-color: #52646a;
+  --hr-color: #c4d2cd;
+  --divider-color: #c4d2cd;
+  --tag-color: var(--text-accent);
+  --tag-color-hover: #b85f1c;
+  --tag-background: #9e50171f;
+  --tag-background-hover: #9e501733;
+  --tag-border-color: transparent;
+  --tag-border-color-hover: #9e501755;
+  --checkbox-color: var(--text-accent);
+  --checkbox-color-hover: #b85f1c;
+  --checkbox-marker-color: #eef3f0;
+  --checkbox-border-color: #c4d2cd;
+  --checkbox-border-color-hover: var(--text-accent);
+  --checklist-done-color: #52646a;
+  --pill-color: #18272b;
+  --pill-color-hover: #18272b;
+  --pill-color-remove: #52646a;
+  --pill-color-remove-hover: #d06a52;
+  --pill-background: transparent;
+  --pill-background-hover: #3d6b7633;
+  --pill-border-color: transparent;
+  --pill-border-color-hover: var(--text-accent);
+  --list-marker-color: #52646a;
+  --list-marker-color-hover: var(--text-accent);
+  --list-marker-color-collapsed: #52646a;
+  --nav-item-color: #52646a;
+  --nav-item-color-hover: #18272b;
+  --nav-item-color-active: #18272b;
+  --nav-item-background-hover: #3d6b761f;
+  --nav-item-background-active: #3d6b7633;
+  --tab-background-active: #dee7e4;
+  --tab-text-color: #52646a;
+  --tab-text-color-active: #18272b;
+  --tab-text-color-focused-active-current: #18272b;
+  --tab-container-background: #e7efeb;
+  --tab-divider-color: #c4d2cd;
+  --tab-outline-color: var(--text-accent);
+  --titlebar-background: #dee7e4;
+  --titlebar-background-focused: #e7efeb;
+  --titlebar-text-color: #52646a;
+  --titlebar-text-color-focused: #18272b;
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb-bg: #3d6b7640;
+  --scrollbar-active-thumb-bg: #3d6b7666;
+  --table-background: #e7efeb;
+  --table-border-color: #c4d2cd;
+  --table-row-alt-background: #e7efeb;
+  --table-row-background-hover: #3d6b7614;
+  --table-selection: #9e501722;
+  --table-selection-border-color: var(--text-accent);
+  --table-header-background: #f2f7f4;
+  --table-header-background-hover: #3d6b7633;
+  --table-header-border-color: #c4d2cd;
+  --table-header-color: #18272b;
+  --table-text-color: #18272b;
+  --table-drag-handle-background: #f2f7f4;
+  --table-drag-handle-background-active: var(--text-accent);
+  --table-drag-handle-color: #52646a;
+  --table-drag-handle-color-active: #eef3f0;
+  --ribbon-background: #dee7e4;
+  --ribbon-background-collapsed: #dee7e4;
+  --status-bar-background: #e7efeb;
+  --status-bar-border-color: #c4d2cd;
+  --status-bar-text-color: #52646a;
+  --modal-background: #e7efeb;
+  --modal-border-color: #c4d2cd;
+  --icon-color: #52646a;
+  --icon-color-hover: #18272b;
+  --icon-color-active: var(--text-accent);
+  --icon-color-focused: var(--text-accent);
+  --search-clear-button-color: #52646a;
+  --search-icon-color: #52646a;
+  --search-result-background: #e7efeb;
+  --embed-background: #e7efeb;
+  --embed-border-start: 4px solid var(--text-accent);
+  --embed-block-shadow-hover: 0 2px 10px rgba(61, 107, 118, 0.25);
+  --inline-title-color: #18272b;
+  --inline-title-font: var(--tw-font-sans);
+  --divider-color-hover: var(--text-accent);
+  --divider-width-hover: 2px;
+  --callout-info: #5f93b0;
+  --callout-todo: #5f93b0;
+  --callout-tip: #5f97a0;
+  --callout-success: #86a87f;
+  --callout-question: #a487ba;
+  --callout-example: #a487ba;
+  --callout-error: #d06a52;
+  --callout-fail: #d06a52;
+  --callout-bug: #ba7886;
+  --callout-warning: #e0832a;
+  --callout-summary: #c9651d;
+  --callout-important: #c9651d;
+  --callout-quote: var(--text-muted);
+  --callout-default: var(--text-muted);
+  --graph-line: #c4d2cd;
+  --graph-text: #52646a;
+  --graph-node: #3d6b76;
+  --graph-node-unresolved: #8a989b;
+  --graph-node-focused: #b85f1c;
+  --graph-node-tag: #5f93b0;
+  --graph-node-attachment: #5f97a0;
+  --canvas-background: #dee7e4;
+  --canvas-card-label-color: #52646a;
+  --canvas-dot-pattern: #c4d2cd;
+  --canvas-color-1: #d06a52;
+  --canvas-color-2: #c9651d;
+  --canvas-color-3: #e0832a;
+  --canvas-color-4: #86a87f;
+  --canvas-color-5: #5f97a0;
+  --canvas-color-6: #a487ba;
+  --metadata-background: #dee7e4;
+  --metadata-border-color: #c4d2cd;
+  --metadata-divider-color: #c4d2cd;
+  --metadata-gap: 1px;
+  --metadata-input-height: calc(var(--font-text-size) * 1.4);
+  --metadata-label-text-color: #52646a;
+  --metadata-label-text-color-hover: #18272b;
+  --metadata-label-font-size: 0.75em;
+  --metadata-input-font-size: 0.75em;
+  --metadata-sidebar-label-font-size: 0.75em;
+  --metadata-sidebar-input-font-size: 0.75em;
+  --metadata-input-text-color: #18272b;
+  --metadata-input-background: #dee7e4;
+  --metadata-input-background-hover: #e7efeb;
+  --metadata-property-background: #dee7e4;
+  --metadata-property-background-hover: #e7efeb;
+  --metadata-property-background-active: #3d6b7633;
+}
+
+/* Note body reads in Fraunces (serif) -- the reading voice; UI chrome and headings answer in
+   Archivo. A touch larger (relative em, so the font-size slider still works), with the reading
+   OpenType features already used on the web surface (old-style, proportional figures; common
+   ligatures) and explicit optical sizing so Fraunces serves its sturdier text-size cuts here
+   rather than the high-contrast display ones. */
+.markdown-preview-view, .markdown-source-view.mod-cm6 .cm-content {
+  font-size: calc(1em * var(--tw-body-scale, 1.2));
+  font-optical-sizing: auto;
+  font-variant-numeric: oldstyle-nums proportional-nums; font-variant-ligatures: common-ligatures;
+}
+/* Headings in Archivo (sans): with the body serif, the voices swap -- sans headings mark the
+   structure, the serif body carries the reading. Tracking a touch tighter than before
+   (grotesques gain from it at display sizes; Fraunces didn't); weights stay from Obsidian's
+   --h*-weight. Discretionary ligatures dropped: they were a Fraunces feature, Archivo has none.
+   The note title itself is --inline-title-font above, not this selector. */
+.markdown-rendered :is(h1, h2, h3, h4, h5, h6),
+.markdown-source-view.mod-cm6 :is(.HyperMD-header, .cm-header) {
+  font-family: var(--tw-font-sans); font-variation-settings: normal; letter-spacing: -0.015em; text-wrap: balance;
+  font-variant-ligatures: common-ligatures;
+}
+/* Blockquotes: the quoted voice shares the body's serif now (it used to be the one serif island
+   in a sans body); the sea tint (--blockquote-background-color, per mode above) and the accent
+   border carry the distinction instead. Emphasis needs no override anymore either -- em/i just
+   inherit Fraunces and render as its true italic. */
+.markdown-rendered blockquote, .cm-s-obsidian .HyperMD-quote {
+  border-radius: 0 4px 4px 0;
+}
+.markdown-rendered pre code, .cm-s-obsidian { font-feature-settings: "liga" 1, "calt" 1; }
+/* Properties panel in mono, for the key: value read. Obsidian's CSS-variable API has no documented
+   font-family hook for Properties (only sizes/colours), so this targets the panel's actual DOM classes
+   directly -- best-effort/unofficial, inert if a future Obsidian version renames them; verify visually. */
+.metadata-property-key, .metadata-property-value { font-family: var(--tw-font-mono); }
+/* Footnotes panel: one background, the note's own. Root cause of the old two-tone seam,
+   found by reading app.css 1.12 directly: each footnote's content renders as a
+   .markdown-embed, whose background reads --embed-background -- the lifted surface tone set
+   above for real embeds -- while the row around it reads --footnote-input-background (the
+   note bg, set above). Row and content disagreeing is exactly the seam. The embed is
+   detinted here only inside the panel; hover-popover footnote previews keep the embed look.
+   The !important catch-all survives from earlier selector fights as a backstop against
+   internal rules this app.css no longer has -- redundant today, harmless, and it also keeps
+   the .is-editing row flat (the focus ring, not a background swap, signals editing). */
+.footnotes-view .markdown-embed { background-color: transparent; }
+.footnote, .footnote-list-item, .footnote-list {
+  background: var(--background-primary) !important;
+}
+/* Footnotes stay in the sans voice, upright: they're apparatus, not reading text, so they keep
+   Archivo against the serif body. Clipped sources also love arriving as wall-to-wall italics,
+   so emphasis inside a footnote flattens to upright instead of rendering as Fraunces italic.
+   Covers the footnotes panel, the reading-view footnote section, and live preview's footnote
+   definition lines. */
+.footnotes-view .footnote-content, .markdown-rendered .footnotes,
+.cm-s-obsidian .cm-line.HyperMD-footnote {
+  font-family: var(--tw-font-sans); font-style: normal;
+}
+.footnotes-view .footnote-content :is(em, i), .markdown-rendered .footnotes :is(em, i),
+.cm-s-obsidian .cm-line.HyperMD-footnote .cm-em {
+  font-style: normal;
+}
+
+.cm-s-obsidian .cm-comment, .markdown-rendered pre code .token.comment { font-style: italic; }
+.cm-s-obsidian .cm-keyword, .markdown-rendered pre code .token.keyword { font-weight: 700; }
+.cm-s-obsidian .cm-type, .markdown-rendered pre code .token.tag { font-style: italic; }
+
+/* Link underline offset: no official Obsidian variable for this, --link-decoration*
+   (colour, style, thickness) above covers the rest. */
+.markdown-rendered a, .cm-s-obsidian .cm-link, .cm-s-obsidian .cm-url, .cm-s-obsidian .cm-hmd-internal-link {
+  text-underline-offset: 0.16em;
+}
+.markdown-rendered a:hover { text-decoration-thickness: 0.1em; }
+/* External-link glyph: a clean up-right arrow that inherits the link colour. */
+.external-link { background-image: none; padding-right: 0; }
+.external-link::after {
+  content: ""; display: inline-block; width: 0.62em; height: 0.62em; margin-left: 0.12em; vertical-align: -0.05em;
+  background-color: currentColor;
+  -webkit-mask: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272.5%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M7%207h10v10%27/%3E%3Cpath%20d%3D%27M7%2017%2017%207%27/%3E%3C/svg%3E) center / contain no-repeat;
+  mask: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272.5%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M7%207h10v10%27/%3E%3Cpath%20d%3D%27M7%2017%2017%207%27/%3E%3C/svg%3E) center / contain no-repeat;
+}
+/* File explorer: slightly smaller labels that wrap to a second/third line instead of truncating. */
+.workspace-leaf-content[data-type="file-explorer"] .tree-item-self { height: auto; }
+.workspace-leaf-content[data-type="file-explorer"] .tree-item-inner {
+  font-size: 0.88em; line-height: 1.25; white-space: normal; overflow: visible; text-overflow: clip; word-break: break-word;
+}
+
+/* Style Settings escape hatches: class present reverts that one piece (to Obsidian stock, or
+   to the earlier Try-Works voice). Font stack literal in tw-body-sans for the same reason the
+   three theme font hooks above are literal. */
+body.tw-headings-serif { --inline-title-font: var(--tw-font-serif); }
+body.tw-headings-serif .markdown-rendered :is(h1, h2, h3, h4, h5, h6),
+body.tw-headings-serif .markdown-source-view.mod-cm6 :is(.HyperMD-header, .cm-header) {
+  font-family: var(--tw-font-serif); letter-spacing: -0.01em;
+  font-variant-ligatures: common-ligatures discretionary-ligatures;
+}
+body.tw-body-sans { --font-text-theme: "Archivo", system-ui, sans-serif; }
+body.tw-explorer-truncate .workspace-leaf-content[data-type="file-explorer"] .tree-item-inner {
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}

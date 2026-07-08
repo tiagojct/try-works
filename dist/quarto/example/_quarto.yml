@@ -1,0 +1,18 @@
+# Example Quarto config using the Try-Works theme.
+# Copy try-works.scss, try-works-dark.scss, try-works.theme, and typst-brand.typ
+# next to this file (or adjust the paths).
+project:
+  type: default
+format:
+  html:
+    theme:
+      light: try-works.scss
+      dark: try-works-dark.scss
+    highlight-style: try-works.theme
+    toc: true
+  typst:
+    include-in-header: typst-brand.typ
+    fontsize: 11pt
+    margin:
+      x: 2.5cm
+      y: 2.5cm

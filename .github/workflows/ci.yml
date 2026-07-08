@@ -12,10 +12,10 @@ jobs:
         with:
           python-version: "3.x"
       - name: Validate tokens, contrast, roles, scales
-        run: python3 scripts/validate.py
+        run: python3 src/scripts/validate.py
       - name: Check generated files are in sync with the json
-        run: python3 scripts/generate.py --check
+        run: python3 src/scripts/generate.py --check
       - name: Colour-vision report
-        run: python3 scripts/cvd_check.py
+        run: python3 src/scripts/cvd_check.py
       - name: Portuguese coverage and subset range
-        run: python3 scripts/check_fonts.py
+        run: python3 src/scripts/check_fonts.py

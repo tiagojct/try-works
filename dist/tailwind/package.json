@@ -1,0 +1,24 @@
+{
+  "name": "try-works-tailwind",
+  "version": "1.0.0",
+  "description": "Try-Works identity palette as a Tailwind colour preset. Rooted in Moby-Dick.",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "colors.generated.js",
+    "README.md"
+  ],
+  "keywords": [
+    "tailwindcss",
+    "color-palette",
+    "design-tokens",
+    "moby-dick",
+    "try-works"
+  ],
+  "license": "MIT",
+  "author": "Tiago Jacinto",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tiagojct/try-works"
+  }
+}

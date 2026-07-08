@@ -1,0 +1,11 @@
+// Try-Works colours. Generated from try-works.json.
+#let pitch = rgb("#12161b")
+#let hold = rgb("#1b2127")
+#let sea-deep = rgb("#14242c")
+#let sea = rgb("#2c4953")
+#let sea-bright = rgb("#4d7680")
+#let sea-pale = rgb("#8fb6bd")
+#let ember = rgb("#c9651d")
+#let flame = rgb("#e0832a")
+#let whale = rgb("#f1efe9")
+#let gull = rgb("#97a0a4")
