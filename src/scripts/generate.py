@@ -12,7 +12,7 @@ Layout: authoring inputs live under src/; generated tokens are written under dis
 (committed). The web app embeds its generated CSS in place at src/web/src/css.
 """
 import json, pathlib, sys, uuid
-from generate_obsidian import build_obsidian
+from generate_obsidian import build_obsidian, _mix
 
 SRC = pathlib.Path(__file__).resolve().parent.parent   # src/ (authoring inputs)
 REPO = SRC.parent                                       # repo root (holds dist/)
@@ -136,21 +136,121 @@ def build_ghostty_cold(D):
     g += ["palette = %d=%s" % (i, c) for i, c in enumerate(ansi)]
     return "\n".join(g) + "\n"
 
+def _iterm_color(hexv):
+    """One iTerm2 colour <dict>: sRGB components as 0-1 floats (repr is
+    deterministic, so the drift gate stays stable), keys in iTerm's own
+    alphabetical export order."""
+    h = hexv.lstrip("#")
+    r, g, b = (int(h[i:i+2], 16) / 255 for i in (0, 2, 4))
+    return ("\t<dict>\n"
+            "\t\t<key>Alpha Component</key>\n\t\t<real>1</real>\n"
+            "\t\t<key>Blue Component</key>\n\t\t<real>%r</real>\n"
+            "\t\t<key>Color Space</key>\n\t\t<string>sRGB</string>\n"
+            "\t\t<key>Green Component</key>\n\t\t<real>%r</real>\n"
+            "\t\t<key>Red Component</key>\n\t\t<real>%r</real>\n"
+            "\t</dict>" % (b, g, r))
+
+def _iterm_plist(pairs):
+    body = "\n".join("\t<key>%s</key>\n%s" % (k, _iterm_color(v)) for k, v in pairs)
+    return ('<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n'
+            '<plist version="1.0">\n<dict>\n' + body + "\n</dict>\n</plist>\n")
+
+def build_iterm(D):
+    """Try-Fire (dark) iTerm2 preset: same sources as build_ghostty. Bold reuses
+    the foreground and Link is ANSI 12 (bright tide) -- iTerm falls back to its
+    own defaults for any key a preset omits, so both are pinned explicitly."""
+    t = D["terminal"]
+    pairs = [("Ansi %d Color" % i, c) for i, c in enumerate(t["ansi"])]
+    pairs += [("Background Color", t["background"]), ("Bold Color", t["foreground"]),
+              ("Cursor Color", t["cursor"]), ("Cursor Text Color", t["cursor-text"]),
+              ("Foreground Color", t["foreground"]), ("Link Color", t["ansi"][12]),
+              ("Selected Text Color", t["selection-fg"]), ("Selection Color", t["selection-bg"])]
+    return _iterm_plist(pairs)
+
+def build_iterm_cold(D):
+    """True Lamp (light) iTerm2 preset: chrome from modes.cold, same 16-colour
+    identity palette (mirrors build_ghostty_cold). Link uses cold sea-bright,
+    not the ANSI bright blue -- it must stay readable on the light background
+    (sea-bright/bg is a validate.py-locked pair)."""
+    cold, ansi = D["modes"]["cold"], D["terminal"]["ansi"]
+    pairs = [("Ansi %d Color" % i, c) for i, c in enumerate(ansi)]
+    pairs += [("Background Color", cold["bg"]), ("Bold Color", cold["text"]),
+              ("Cursor Color", cold["accent"]), ("Cursor Text Color", cold["on-accent"]),
+              ("Foreground Color", cold["text"]), ("Link Color", cold["sea-bright"]),
+              ("Selected Text Color", cold["on-sea"]), ("Selection Color", cold["sea"])]
+    return _iterm_plist(pairs)
+
+def _omz_theme(label, note, path, paren, branch, dirty, caret_ok, caret_err, err):
+    """One oh-my-zsh .zsh-theme. Truecolor (%F{#hex}, zsh >= 5.7) so the prompt
+    carries the exact brand hues in any terminal, and pairs cleanly with the
+    Try-Works terminal preset. Two-line prompt: cwd + git on line one, caret on
+    line two. Discipline holds -- the whole prompt is cool sea; the ember fire
+    lights in exactly one place, the git-dirty mark; a failed command uses red
+    (brick), a distinct signal, not the brand fire."""
+    F = lambda h: "%F{" + h + "}"
+    return "\n".join([
+        "# Try-Works (%s) -- oh-my-zsh theme. Generated from try-works.json." % label,
+        "# %s" % note,
+        "# Truecolor prompt (needs zsh >= 5.7). Cool sea is the field; the ember",
+        "# fire marks only uncommitted work; a red caret/code means the last command failed.",
+        "",
+        'ZSH_THEME_GIT_PROMPT_PREFIX=" ' + F(paren) + "(" + F(branch) + '"',
+        'ZSH_THEME_GIT_PROMPT_SUFFIX="' + F(paren) + ')%f"',
+        'ZSH_THEME_GIT_PROMPT_DIRTY="' + F(dirty) + '*"',
+        'ZSH_THEME_GIT_PROMPT_CLEAN=""',
+        "",
+        "PROMPT='" + F(path) + "%~%f$(git_prompt_info)",
+        "%(?." + F(caret_ok) + "." + F(caret_err) + ")❯%f '",
+        "RPROMPT='%(?.." + F(err) + "%?%f)'",
+        "",
+    ])
+
+def build_omz(D):
+    """Try-Fire (dark) oh-my-zsh prompt: brand hues straight from the palette."""
+    pal, lit = D["palette"], D["modes"]["lit"]
+    return _omz_theme("Try-Fire", "Dark.",
+        path=pal["sea"]["foam"], paren=lit["sea-bright"], branch=pal["extended"]["shoal"],
+        dirty=pal["fire"]["ember"], caret_ok=lit["sea-bright"],
+        caret_err=pal["extended"]["brick"], err=pal["extended"]["brick"])
+
+def build_omz_cold(D):
+    """True Lamp (light) oh-my-zsh prompt: cold-mode chrome plus the extended
+    hues darkened toward the cold ink (t=0.45, the shared light-safe ratio) so
+    branch/error read on a light terminal background."""
+    cold, ex = D["modes"]["cold"], D["palette"]["extended"]
+    ls = lambda h: _mix(h, cold["text"], 0.45)
+    return _omz_theme("True Lamp", "Light.",
+        path=cold["sea-bright"], paren=cold["text-muted"], branch=ls(ex["shoal"]),
+        dirty=cold["accent"], caret_ok=cold["sea-bright"],
+        caret_err=ls(ex["brick"]), err=ls(ex["brick"]))
+
 def build_vivaldi(D, modekey):
-    """Vivaldi browser theme (settings.json). Schema matches an exported Vivaldi
-    theme (engineVersion 1): five colours plus behaviour flags and a stable id.
+    """Vivaldi browser theme (settings.json). Schema matches a current exported
+    Vivaldi theme (engineVersion 1, verified against installed themes): five base
+    colours -- Vivaldi derives the rest -- plus behaviour flags and a stable id.
     assemble.sh zips this into an importable .zip per mode. The id is derived
-    deterministically (uuid5) so regeneration does not drift."""
+    deterministically (uuid5) so regeneration does not drift.
+
+    - contrast 5, not Vivaldi's looser 2: it is the minimum-contrast floor Vivaldi
+      enforces on the UI text it DERIVES from these colours (active-tab titles on
+      the sea highlight, text on the fire accent). 2 under-enforces; 5 holds the
+      AA-ish floor this system guarantees everywhere else. Our own colorFg is 12:1
+      on colorBg, so it is never the one Vivaldi has to override.
+    - radius 6 = the system's `lg` radius token (spacing.radius.lg).
+    - opaque (alpha 1, blur 0): no translucency gimmick; chrome stays legible.
+    - accentOnWindow false keeps the fire off the whole window -- it marks only the
+      accent elements Vivaldi paints with colorAccentBg, so the fire stays rare."""
     m = D["modes"][modekey]
     up = lambda h: h.upper()
     name = "Try-Works" if modekey == "lit" else "Try-Works (True Lamp)"
     tid = str(uuid.uuid5(uuid.NAMESPACE_URL, "try-works.vivaldi." + modekey))
     theme = {
         "accentFromPage": False, "accentOnWindow": False, "accentSaturationLimit": 1,
-        "alpha": 1, "backgroundImage": "", "backgroundPosition": "stretch", "blur": 0,
-        "colorAccentBg": up(m["accent"]), "colorBg": up(m["bg"]), "colorFg": up(m["text"]),
+        "alpha": 1, "backgroundImage": "", "backgroundPosition": "stretch", "backgroundSource": "",
+        "blur": 0, "colorAccentBg": up(m["accent"]), "colorBg": up(m["bg"]), "colorFg": up(m["text"]),
         "colorHighlightBg": up(m["sea"]), "colorPosition": "unified", "colorWindowBg": up(m["surface"]),
-        "contrast": 2, "dimBlurred": False, "engineVersion": 1, "id": tid, "name": name,
+        "contrast": 5, "dimBlurred": False, "engineVersion": 1, "id": tid, "name": name,
         "preferSystemAccent": False, "radius": 6, "simpleScrollbar": False,
         "transparencyTabBar": False, "transparencyTabs": False, "url": "", "version": 1,
     }
@@ -454,6 +554,236 @@ def build_vscode(D):
              "semanticTokenColors": semantic, "colors": wb, "tokenColors": tokenColors}
     return json.dumps(theme, indent=2) + "\n"
 
+def _cold_remap(D):
+    """Shared lit->cold colour remap for the code editors (VS Code + Zed light
+    variants). One table so both light themes stay identical in philosophy and
+    a colour with no mapping fails generation loudly in either. Mirrors the
+    system's other light surfaces: hues darken toward the ink (t=0.45, the ratio
+    the Obsidian/Quarto light builds use, verified >=4.5:1); ember->cold accent
+    and flame->cold accent-deep because light-mode hovers must darken, not
+    brighten; the "#ffffffNN" white overlays flip to black; pure-black alpha
+    shadows pass through. Terminal ANSI is NOT remapped here (callers keep the
+    identity palette, the Ghostty/iTerm precedent) -- guard terminal.ansi* keys
+    before calling remap(). Returns (remap, deep)."""
+    lit, cold, pal = D["modes"]["lit"], D["modes"]["cold"], D["palette"]
+    fire, sea, ext = pal["fire"], pal["sea"], pal["extended"]
+    ls = lambda h: _mix(h, cold["text"], 0.45)
+    M6 = {
+        lit["bg"]: cold["bg"], lit["surface"]: cold["surface"], lit["surface-raised"]: cold["surface-raised"],
+        lit["text"]: cold["text"], lit["text-muted"]: cold["text-muted"], lit["border"]: cold["border"],
+        lit["on-accent"]: cold["on-accent"], lit["sea"]: cold["sea-pale"], lit["sea-bright"]: cold["sea-bright"],
+        sea["foam"]: ls(sea["foam"]),
+        fire["ember"]: cold["accent"], fire["flame"]: cold["accent-deep"], fire["oil"]: cold["accent-deep"],
+        # kelp gets t=0.5, not the shared 0.45: strings sit on the editor bg (cold's darkest light
+        # surface, unlike Obsidian's lighter code surface) and 0.45 lands at 4.44:1 -- just under AA.
+        ext["kelp"]: _mix(ext["kelp"], cold["text"], 0.5),
+        ext["brick"]: ls(ext["brick"]), ext["dusk"]: ls(ext["dusk"]),
+        ext["tide"]: ls(ext["tide"]), ext["shoal"]: ls(ext["shoal"]),
+        # code-map roles / UI literals that are not palette tokens
+        "#cdd2d3": _mix(cold["text"], cold["text-muted"], 0.35),   # parameter role + chrome fg
+        "#aeb6b8": cold["text-muted"], "#8a9296": cold["text-muted"],  # operator, punctuation
+        "#606c72": _mix(cold["text-muted"], cold["bg"], 0.35),     # dim
+        "#1d242b": _mix(cold["surface"], cold["border"], 0.5),     # hover
+        "#222a31": _mix(cold["border"], cold["bg"], 0.5),          # faint guides
+        "#3a4754": _mix(cold["border"], cold["text-muted"], 0.35), # whitespace/tree strokes
+        "#3a1d1a": _mix(cold["bg"], ext["brick"], 0.18),           # validation error bg
+        "#33271a": _mix(cold["bg"], fire["ember"], 0.18),          # validation warning bg
+        "#16242c": _mix(cold["bg"], ext["tide"], 0.18),            # validation info bg
+    }
+    M8 = {"#ffffff14": "#00000010", "#ffffff1f": "#0000001a", "#ffffff0a": "#0000000a"}
+    KEEP = {"#00000000", "#0000004d", "#00000066", "#0000007f"}
+    def remap(v):
+        lv = v.lower()
+        if lv in M8: return M8[lv]
+        if lv in KEEP: return v
+        base, alpha = lv[:7], lv[7:]
+        if base in M6: return M6[base] + alpha
+        raise KeyError("no light mapping for colour %r in _cold_remap" % v)
+    def deep(x):
+        if isinstance(x, str) and x.startswith("#"): return remap(x)
+        if isinstance(x, dict): return {k: deep(v) for k, v in x.items()}
+        if isinstance(x, list): return [deep(i) for i in x]
+        return x
+    return remap, deep
+
+def build_vscode_cold(D):
+    """True Lamp (light) VS Code theme, derived from the dark build by the shared
+    _cold_remap total remap rather than a second hand-maintained builder: every
+    key the dark theme sets is covered by construction, and a future dark-side
+    colour with no light mapping fails generation loudly instead of shipping
+    wrong."""
+    cold = D["modes"]["cold"]
+    remap, deep = _cold_remap(D)
+    theme = json.loads(build_vscode(D))
+    colors = {k: (v if k.startswith("terminal.ansi") else remap(v)) for k, v in theme["colors"].items()}
+    colors.update({
+        # dark pairs these with near-white text; after the remap that text is ink over a dark
+        # hue, so the two status pills flip to the light-on-dark on-accent instead.
+        "statusBarItem.warningForeground": cold["on-accent"],
+        "statusBarItem.errorForeground": cold["on-accent"],
+    })
+    out = {"name": "Try-Works Cold", "type": "light", "semanticHighlighting": True,
+           "semanticTokenColors": deep(theme["semanticTokenColors"]),
+           "colors": colors, "tokenColors": deep(theme["tokenColors"])}
+    return json.dumps(out, indent=2) + "\n"
+
+# Try-Works Icons: monogram entries. (id, monogram, hue key, fileExtensions, fileNames, languageIds).
+# Typography is the icon: a two-letter mono monogram on a faint hue chip beats pseudo-logos and stays
+# single-source. Hues come from the extended tier (sanctioned on code surfaces) plus fire/neutrals;
+# README carries the one rare fire mark (the file you are told to read). File/folder NAME keys are
+# matched lowercased by VS Code, so tables list lowercase only.
+_ICON_MONO = [
+    ("py",    "Py", "tide",  ["py", "pyi"], [], ["python"]),
+    ("r",     "R",  "shoal", ["r"], [], ["r"]),
+    ("ipynb", "Nb", "dusk",  ["ipynb"], [], []),
+    ("qmd",   "Qm", "kelp",  ["qmd"], [], ["quarto"]),
+    ("rmd",   "Rm", "kelp",  ["rmd"], [], ["rmd"]),
+    ("md",    "Md", "muted", ["md", "markdown"], [], ["markdown"]),
+    ("js",    "JS", "flame", ["js", "mjs", "cjs"], [], ["javascript"]),
+    ("ts",    "TS", "tide",  ["ts", "mts"], [], ["typescript"]),
+    ("jsx",   "Jx", "shoal", ["jsx", "tsx"], [], ["javascriptreact", "typescriptreact"]),
+    ("json",  "{}", "flame", ["json", "jsonc", "json5"], [], ["json", "jsonc"]),
+    ("yaml",  "Ym", "dusk",  ["yaml", "yml"], [], ["yaml"]),
+    ("toml",  "Tm", "dusk",  ["toml"], [], ["toml"]),
+    ("csv",   "Cv", "kelp",  ["csv", "tsv"], [], []),
+    ("xml",   "Xm", "muted", ["xml"], [], ["xml"]),
+    ("html",  "<>", "brick", ["html", "htm"], [], ["html"]),
+    ("css",   "#",  "tide",  ["css", "scss", "sass", "less"], [], ["css", "scss"]),
+    ("svg",   "Sv", "dusk",  ["svg"], [], []),
+    ("sh",    ">_", "kelp",  ["sh", "zsh", "bash", "fish"], [".zshrc", ".zprofile", ".bashrc", ".bash_profile"], ["shellscript"]),
+    ("sql",   "Sq", "shoal", ["sql"], [], ["sql"]),
+    ("tex",   "Tx", "dusk",  ["tex", "sty", "cls"], [], ["latex"]),
+    ("bib",   "Bb", "dusk",  ["bib"], [], ["bibtex"]),
+    ("typ",   "Ty", "tide",  ["typ"], [], ["typst"]),
+    ("lua",   "Lu", "tide",  ["lua"], [], ["lua"]),
+    ("rs",    "Rs", "brick", ["rs"], [], ["rust"]),
+    ("go",    "Go", "shoal", ["go"], [], ["go"]),
+    ("c",     "C",  "tide",  ["c", "h"], [], ["c"]),
+    ("cpp",   "C+", "tide",  ["cpp", "hpp", "cc", "hh"], [], ["cpp"]),
+    ("java",  "Jv", "brick", ["java"], [], ["java"]),
+    ("rb",    "Rb", "brick", ["rb"], [], ["ruby"]),
+    ("php",   "Ph", "dusk",  ["php"], [], ["php"]),
+    ("swift", "Sw", "brick", ["swift"], [], ["swift"]),
+    ("make",  "Mk", "muted", ["mk"], ["makefile", "justfile"], ["makefile"]),
+    ("docker", "Dk", "tide", ["dockerfile"], ["dockerfile", ".dockerignore", "docker-compose.yml", "compose.yaml"], ["dockerfile"]),
+    ("license", "Li", "muted", [], ["license", "license.md", "license.txt", "licence", "copying",
+                                    "license-code", "license-design"], []),
+    ("readme", "Re", "ember", [], ["readme", "readme.md", "readme.txt"], []),
+    ("git",   "G",  "brick", ["gitignore"], [".gitignore", ".gitattributes", ".gitmodules"], ["git-commit", "git-rebase"]),
+    ("env",   "Ev", "muted", ["env"], [".env", ".env.local", ".envrc"], []),
+    ("lock",  "Lk", "muted", ["lock"], ["package-lock.json", "renv.lock", "poetry.lock", "uv.lock", "cargo.lock"], []),
+    ("cff",   "Cf", "muted", ["cff"], ["citation.cff"], []),
+    ("txt",   "Tt", "muted", ["txt"], [], ["plaintext"]),
+    ("log",   "Lg", "muted", ["log"], [], ["log"]),
+    ("font",  "Aa", "foam",  ["ttf", "otf", "woff", "woff2"], [], []),
+    ("xlsx",  "Xl", "kelp",  ["xlsx", "xls", "ods"], [], []),
+    ("docx",  "Dc", "tide",  ["docx", "doc", "odt"], [], []),
+    ("pptx",  "Pp", "brick", ["pptx", "ppt", "odp"], [], []),
+    ("db",    "Db", "shoal", ["db", "sqlite", "duckdb", "parquet", "feather"], [], []),
+]
+
+# Folder hue variants. (id suffix, hue key, folder names). Default folder is sea-bright.
+_ICON_FOLDERS = [
+    ("src",    "tide",  ["src", "lib"]),
+    ("data",   "shoal", ["data", "datasets", "raw"]),
+    ("docs",   "dusk",  ["docs", "doc", "notes", "notebooks"]),
+    ("test",   "kelp",  ["tests", "test", "__tests__", "spec"]),
+    ("scripts", "brick", ["scripts", "bin", "tools", ".git"]),
+    ("assets", "foam",  ["assets", "static", "public", "resources", "fonts", "img", "images", "figures"]),
+    ("meta",   "muted", ["config", ".config", ".github", ".vscode", "node_modules", "venv", ".venv",
+                          "renv", "dist", "build", "out", "target", "__pycache__", ".cache"]),
+]
+
+def build_vscode_icons(D):
+    """Try-Works Icons: a VS Code file-icon theme, generated like every other
+    surface. Modeled on Material Icon Theme's JSON conventions (iconDefinitions
+    + fileExtensions/fileNames/folderNames/folderNamesExpanded/languageIds,
+    hidesExplorerArrows) but with a typographic design language: monogram-on-
+    chip file icons and lucide-outline folders (same folder/file/image/music
+    path data the Obsidian surface lifted from Obsidian's bundled icon map).
+    Returns {relpath: text} for the whole dist/vscode/icons/ tree; merged into
+    artifacts() with **, so the drift gate covers every SVG. Internal
+    consistency is asserted here so a broken table fails generation loudly."""
+    pal, lit = D["palette"], D["modes"]["lit"]
+    ex, fire, sea = pal["extended"], pal["fire"], pal["sea"]
+    H = {"tide": ex["tide"], "shoal": ex["shoal"], "dusk": ex["dusk"], "kelp": ex["kelp"],
+         "brick": ex["brick"], "flame": fire["flame"], "ember": fire["ember"],
+         "muted": lit["text-muted"], "foam": sea["foam"], "seab": lit["sea-bright"]}
+    esc = lambda s: s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    def svg(body, stroke="none"):
+        return ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%s'"
+                " stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'>%s</svg>\n"
+                % (stroke, body))
+    def mono(mg, hue):
+        fs = "12.5" if len(mg) == 1 else "10.5"
+        return svg("<rect x='2.5' y='2.5' width='19' height='19' rx='4.5' fill='%s' fill-opacity='0.13'/>" % hue
+                   + "<text x='12' y='12.6' text-anchor='middle' dominant-baseline='central'"
+                     " font-family=\"ui-monospace,'SF Mono',Menlo,monospace\" font-weight='700'"
+                     " font-size='%s' fill='%s'>%s</text>" % (fs, hue, esc(mg)))
+    P = lambda d: "<path d='%s'/>" % d
+    page = P("M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706"
+             "l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z")
+    corner = P("M14 2v5a1 1 0 0 0 1 1h5")
+    fold_closed = P("M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9"
+                    "A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z")
+    fold_open = P("m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6"
+                  "a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9"
+                  "a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2")
+    out, defs = {}, {}
+    fe, fn, folders, folderso, li = {}, {}, {}, {}, {}
+    base = "dist/vscode/icons/"
+    def add(iid, svg_text):
+        assert iid not in defs, "duplicate icon id %r" % iid
+        defs[iid] = {"iconPath": "./tw-%s.svg" % iid}
+        out[base + "tw-%s.svg" % iid] = svg_text
+    # glyph icons (outline, stroke in hue)
+    add("file", svg(page + corner, stroke=H["muted"]))
+    add("pdf", svg(page + corner + P("M10 12H8") + P("M16 15H8") + P("M16 18H8"), stroke=H["brick"]))
+    add("image", svg("<rect x='3' y='3' width='18' height='18' rx='2'/><circle cx='9' cy='9' r='2'/>"
+                     + P("m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"), stroke=H["dusk"]))
+    add("audio", svg(P("M9 18V5l12-2v13") + "<circle cx='6' cy='18' r='3'/><circle cx='18' cy='16' r='3'/>",
+                     stroke=H["shoal"]))
+    add("video", svg("<rect x='2.5' y='4.5' width='19' height='15' rx='2'/><polygon points='10 9 15.5 12 10 15'/>",
+                     stroke=H["tide"]))
+    add("archive", svg("<rect x='3' y='7' width='18' height='13' rx='2'/>" + P("M3 7l2-3.5h14L21 7")
+                       + P("M10 11.5h4"), stroke=H["muted"]))
+    for ext_list, iid in [(["png", "jpg", "jpeg", "webp", "gif", "avif", "bmp", "ico", "tiff", "heic"], "image"),
+                          (["pdf"], "pdf"),
+                          (["zip", "tar", "gz", "tgz", "7z", "rar"], "archive"),
+                          (["mp3", "wav", "m4a", "ogg", "flac"], "audio"),
+                          (["mp4", "mov", "mkv", "webm"], "video")]:
+        for e in ext_list: fe[e] = iid
+    # monogram icons
+    for iid, mg, hue, exts, names, langs in _ICON_MONO:
+        add(iid, mono(mg, H[hue]))
+        for e in exts: fe[e] = iid
+        for n in names: fn[n] = iid
+        for l in langs: li[l] = iid
+    # folders: default + hue variants, closed and open
+    def add_folder(iid, hue):
+        add(iid, svg(fold_closed, stroke=hue))
+        add(iid + "-open", svg(fold_open, stroke=hue))
+    add_folder("folder", H["seab"])
+    for suffix, hue, names in _ICON_FOLDERS:
+        add_folder("folder-" + suffix, H[hue])
+        for n in names:
+            folders[n] = "folder-" + suffix
+            folderso[n] = "folder-" + suffix + "-open"
+    theme = {
+        "hidesExplorerArrows": False,
+        "file": "file", "folder": "folder", "folderExpanded": "folder-open",
+        "rootFolder": "folder", "rootFolderExpanded": "folder-open",
+        "iconDefinitions": defs,
+        "fileExtensions": fe, "fileNames": fn,
+        "folderNames": folders, "folderNamesExpanded": folderso,
+        "languageIds": li,
+    }
+    for m, kind in ((fe, "extension"), (fn, "name"), (folders, "folder"), (folderso, "folder-open"), (li, "language")):
+        for k, v in m.items():
+            assert v in defs, "unknown icon id %r for %s %r" % (v, kind, k)
+    out[base + "try-works-icon-theme.json"] = json.dumps(theme, indent=2) + "\n"
+    return out
+
 def build_typst(D):
     m = D["modes"]["lit"]
     pairs = [("pitch", m["bg"]), ("hold", m["surface"]), ("sea-deep", m["sea-deep"]), ("sea", m["sea"]),
@@ -462,8 +792,11 @@ def build_typst(D):
     return "// Try-Works colours. Generated from try-works.json.\n" + "".join('#let %s = rgb("%s")\n' % (n, v) for n, v in pairs)
 
 def build_zed(D):
-    """Zed theme family (schema v0.2.0). Dark (Try-Fire) only: UI from modes.lit,
-    syntax from the audited code map, terminal ANSI from the terminal block."""
+    """Zed theme family (schema v0.2.0). Ships both appearances in one family
+    file: dark Try-Fire (built from modes.lit + the audited code map), and light
+    True Lamp, derived from the dark style by the same shared _cold_remap total
+    remap the VS Code light theme uses. Terminal ANSI keeps the identity palette
+    in both (the Ghostty/iTerm precedent), so its keys skip the remap."""
     lit, pal, codem, t = D["modes"]["lit"], D["palette"], D["code"], D["terminal"]
     fire, sea, ext, ansi = pal["fire"], pal["sea"], pal["extended"], t["ansi"]
     c = lambda r: codem[r]["color"]
@@ -546,9 +879,20 @@ def build_zed(D):
      "function.builtin": col(shoal, font_style="italic"), "function.special": col(brick),
      "variable.member": col(c("parameter")), "keyword.import": syn("keyword"), "tag.delimiter": syn("punctuation"),
     }
+    remap, deep = _cold_remap(D)
+    def cold_style(s):
+        # top-level guard keeps terminal.ansi.* on the identity palette; syntax/players nest, so
+        # they recurse through deep(); every other value is a colour string to remap.
+        out = {}
+        for k, v in s.items():
+            if k.startswith("terminal.ansi"): out[k] = v
+            elif isinstance(v, (dict, list)): out[k] = deep(v)
+            else: out[k] = remap(v)
+        return out
     theme = {"$schema": "https://zed.dev/schema/themes/v0.2.0.json",
              "name": "Try-Works", "author": "tiagojct",
-             "themes": [{"name": "Try-Works (Try-Fire)", "appearance": "dark", "style": style}]}
+             "themes": [{"name": "Try-Works (Try-Fire)", "appearance": "dark", "style": style},
+                        {"name": "Try-Works (True Lamp)", "appearance": "light", "style": cold_style(style)}]}
     return json.dumps(theme, indent=2) + "\n"
 
 def stamp_version(rel, D):
@@ -591,7 +935,13 @@ def artifacts(D):
         "dist/tailwind/colors.generated.js": build_tailwind(D),
         "dist/themes/terminals/Try-Works.ghostty": build_ghostty(D),
         "dist/themes/terminals/Try-Works-Cold.ghostty": build_ghostty_cold(D),
+        "dist/themes/terminals/Try-Works.itermcolors": build_iterm(D),
+        "dist/themes/terminals/Try-Works-Cold.itermcolors": build_iterm_cold(D),
+        "dist/omz/try-works.zsh-theme": build_omz(D),
+        "dist/omz/try-works-cold.zsh-theme": build_omz_cold(D),
         "dist/vscode/themes/Try-Works-color-theme.json": build_vscode(D),
+        "dist/vscode/themes/Try-Works-Cold-color-theme.json": build_vscode_cold(D),
+        **build_vscode_icons(D),
         "dist/zed/themes/Try-Works.json": build_zed(D),
         "dist/vivaldi/lit/settings.json": build_vivaldi(D, "lit"),
         "dist/vivaldi/cold/settings.json": build_vivaldi(D, "cold"),

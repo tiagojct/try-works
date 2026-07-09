@@ -1,7 +1,7 @@
 {
   "name": "try-works-color-theme",
   "displayName": "Try-Works",
-  "description": "Try-Works, a Moby-Dick palette for code. Dark (lit), tuned for R and Python. Works in VS Code and Positron.",
+  "description": "Try-Works, a Moby-Dick palette for code. Dark (Try-Fire) and light (True Lamp), tuned for R and Python. Works in VS Code and Positron.",
   "version": "1.0.0",
   "publisher": "tiagojct",
   "engines": {
@@ -21,6 +21,18 @@
         "label": "Try-Works",
         "uiTheme": "vs-dark",
         "path": "./themes/Try-Works-color-theme.json"
+      },
+      {
+        "label": "Try-Works Cold (True Lamp)",
+        "uiTheme": "vs",
+        "path": "./themes/Try-Works-Cold-color-theme.json"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "try-works-icons",
+        "label": "Try-Works Icons",
+        "path": "./icons/try-works-icon-theme.json"
       }
     ]
   }

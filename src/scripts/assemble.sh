@@ -35,4 +35,7 @@ cp -r src/quarto/example dist/quarto/example
 # terminal preset: generated .ghostty already in dist/
 cp src/themes/terminals/README.md src/themes/terminals/preview.svg dist/themes/terminals/
 
-echo "assembled scaffolding into dist/ (tailwind, vscode, zed, vivaldi, obsidian, typst, quarto, themes/terminals)"
+# oh-my-zsh prompt: generated .zsh-theme files already in dist/
+cp src/omz/README.md dist/omz/
+
+echo "assembled scaffolding into dist/ (tailwind, vscode, zed, vivaldi, obsidian, typst, quarto, themes/terminals, omz)"

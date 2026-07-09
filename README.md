@@ -45,7 +45,8 @@ dist/css/               custom properties (colours, type scale, spacing), both m
 dist/tailwind/          preset: colours, fontSize, spacing, borderRadius
 dist/typst/             slide theme + generated colours + poster preset
 dist/obsidian/          theme.css + manifest (Try-Fire / True Lamp)
-dist/themes/terminals/  Ghostty presets (Try-Fire dark + True Lamp light)
+dist/themes/terminals/  Ghostty + iTerm2 presets (Try-Fire dark + True Lamp light)
+dist/omz/               oh-my-zsh prompt themes (Try-Fire dark + True Lamp light)
 dist/vscode/            dark code theme, tuned for R and Python
 dist/zed/               Zed theme (Try-Fire dark), tuned for R and Python
 dist/vivaldi/           Vivaldi browser themes (dark + light), zipped for import

@@ -1,5 +1,39 @@
 # Changelog
 
+## Unreleased
+
+- Vivaldi: raised the minimum-contrast floor from 2 to 5 so Vivaldi-derived UI
+  text (tab titles on the sea highlight, text on the fire accent) meets the AA-ish
+  legibility the rest of the system guarantees, and added the `backgroundSource`
+  field to match the current exported-theme schema. Verified against installed
+  Vivaldi themes; colours and the deterministic ids are unchanged.
+- Added the oh-my-zsh surface: try-works.zsh-theme (Try-Fire) and
+  try-works-cold.zsh-theme (True Lamp), a truecolor two-line prompt. Cool-sea
+  throughout; the ember fire marks only the git-dirty state, a failed command
+  turns the caret and exit code red. Cold uses the shared light-safe hue remap.
+- Zed: added Try-Works (True Lamp), a light appearance in the same theme family,
+  derived from the dark style by the shared lit->cold remap now factored out of
+  the VS Code light builder. Both editors' light themes stay identical in
+  philosophy from one table.
+- VS Code: added Try-Works Icons, a generated file-icon theme (Material-style
+  JSON conventions; monogram-on-chip file icons and lucide-outline folders in
+  palette hues, ~60 SVGs all drift-gated).
+- VS Code: added Try-Works Cold (True Lamp), a light theme derived from the
+  dark one by a total colour remap (same hues darkened toward the ink at the
+  t=0.45 ratio the Obsidian/Quarto light surfaces use; identity terminal ANSI;
+  hovers darken). Unmapped colours fail generation, so the two variants cannot
+  drift apart silently.
+- Added the iTerm2 surface: Try-Works.itermcolors (lit) and
+  Try-Works-Cold.itermcolors (cold) alongside the Ghostty pair, same
+  identity-palette / flipped-chrome split, generated from the json.
+- Obsidian: fixed light-mode hover contrast (hovers now darken to accent-deep
+  in cold; accent-bright measured 3.55:1 against the cold bg), with both hover
+  pairs locked in validate.py. Added alternative task states ([/] [>] [<] [?]
+  [!] [*] [-]), an opt-in focus mode, seamless transclusions (Style Settings
+  toggle restores frames), image captions from pipe text, an img-grid
+  cssclasses helper, quieter status bar / vault chrome, and phone-size
+  Properties type. Body stays Archivo (sans), headings Fraunces (serif).
+
 ## 1.0.0
 
 First stable release. The public surface is frozen: the CSS custom properties,

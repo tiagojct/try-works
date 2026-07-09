@@ -72,6 +72,11 @@ checks = [
  ("lit button",        lit["on-accent"], lit["accent"], 4.5),
  ("lit foam/bg",       lit["sea-pale"], lit["bg"], 4.5),
  ("lit flame/sea(UI)", lit["accent-bright"], lit["sea"], 3.0),
+ # Hover-state text: dark mode hovers brighten (accent-bright), light mode hovers must darken
+ # (accent-deep) -- cold accent-bright/bg measures only 3.55:1, which is why surfaces use
+ # accent-deep for cold hovers. These rows lock both hover pairs at the AA text floor.
+ ("lit hover/bg",       lit["accent-bright"], lit["bg"], 4.5),
+ ("cold hover/bg",      cold["accent-deep"], cold["bg"], 4.5),
  ("cold ink/bg",       cold["text"], cold["bg"], 4.5),
  ("cold muted/bg",     cold["text-muted"], cold["bg"], 4.5),
  ("cold accent/bg",    cold["accent"], cold["bg"], 4.5),

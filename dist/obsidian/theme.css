@@ -30,14 +30,34 @@ settings:
     min: 1.4
     max: 2.0
     step: 0.05
-  - id: tw-headings-serif
-    title: Serif headings (Fraunces)
-    description: Off (default) keeps Try-Works' sans (Archivo) headings.
+  - id: tw-headings-sans
+    title: Sans headings (match body)
+    description: Off (default) keeps Try-Works' serif (Fraunces) headings.
     type: class-toggle
     default: false
-  - id: tw-body-sans
-    title: Sans body text (Archivo)
-    description: Off (default) keeps Try-Works' serif (Fraunces) note body.
+  - id: tw-body-serif
+    title: Serif body text (Fraunces)
+    description: Off (default) keeps Try-Works' sans (Archivo) note body.
+    type: class-toggle
+    default: false
+  - id: tw-interface
+    title: Interface
+    type: heading
+    level: 1
+    collapsed: false
+  - id: tw-focus
+    title: Focus mode
+    description: Dim tabs, ribbon, header and status bar until hovered.
+    type: class-toggle
+    default: false
+  - id: tw-embed-frames
+    title: Framed embeds (Obsidian default)
+    description: Off (default) keeps Try-Works' seamless transclusions.
+    type: class-toggle
+    default: false
+  - id: tw-nav-plain
+    title: Plain file list (no icons)
+    description: Off (default) keeps folder and file icons in the explorer.
     type: class-toggle
     default: false
   - id: tw-explorer-truncate
@@ -56,12 +76,35 @@ body {
      font hooks, unlike every other font-family reference below which is an ordinary CSS
      property on a selector we wrote. Keeping them literal matches the one arrangement
      already proven to work this session (the original Georgia-fallback diagnosis). */
-  --font-text-theme: "Fraunces", Georgia, serif;
+  --font-text-theme: "Archivo", system-ui, sans-serif;
   --font-interface-theme: "Archivo", system-ui, sans-serif;
   --font-monospace-theme: "JetBrains Mono", ui-monospace, monospace;
   --nav-item-white-space: normal;
   --line-height-normal: 1.7;
   --p-spacing: 1.35em;
+  /* Air after a heading in live preview: --p-spacing-empty is core's one hook for the first
+     line that follows a heading line (verified single consumer in app.css 1.12; 0 by
+     default). Reading view gets its match from the margin-block-end rule further down.
+     List items breathe a touch more than stock (0.075em). */
+  --p-spacing-empty: 0.6em;
+  --list-spacing: 0.1em;
+  /* Tighter than stock (0.5625em x 4 = 2.25em): lists sit closer to the text margin. Room
+     still clears the hanging dash (offset -0.95em, drawn in the list rules below). */
+  --list-indent: 1.5em;
+  /* Pull the dash left, clear of the text: the ::after mark anchors at the bullet span's
+     static position, so a mark wider than stock's dot otherwise grows toward the text.
+     Official knob; applies in reading view and editor alike. */
+  --list-bullet-transform: translateX(-0.3em);
+  /* JetBrains Mono's tall x-height reads a step larger than Archivo at equal em (same
+     reasoning as the Properties panel's 0.75em); one notch under stock font-smaller. */
+  --code-size: 0.85em;
+  /* Interface icons one stroke-step lighter than stock (m/l 1.75 -> 1.5px, s/xs 2 ->
+     1.75px): hairline icons sit with the type instead of against it. Official
+     Foundations/Icons vars; xl already ships at 1.25px and stays. */
+  --icon-m-stroke-width: 1.5px;
+  --icon-l-stroke-width: 1.5px;
+  --icon-s-stroke-width: 1.75px;
+  --icon-xs-stroke-width: 1.75px;
 }
 
 .theme-dark {
@@ -111,6 +154,7 @@ body {
   --text-normal: #f1efe9;
   --text-muted: #97a0a4;
   --text-faint: #62696d;
+  --tw-body-weight: 430;
   --text-on-accent: #11151a;
   --text-on-accent-inverted: #f1efe9;
   --text-accent: #c9651d;
@@ -164,6 +208,12 @@ body {
   --checkbox-border-color: #2c3640;
   --checkbox-border-color-hover: var(--text-accent);
   --checklist-done-color: #97a0a4;
+  --tw-task-progress: #4d7680;
+  --tw-task-fwd: #5f93b0;
+  --tw-task-sched: #5f97a0;
+  --tw-task-question: #a487ba;
+  --tw-task-important: #e0832a;
+  --tw-task-star: #c9651d;
   --pill-color: #f1efe9;
   --pill-color-hover: #f1efe9;
   --pill-color-remove: #97a0a4;
@@ -174,7 +224,7 @@ body {
   --pill-border-color-hover: var(--text-accent);
   --list-marker-color: #97a0a4;
   --list-marker-color-hover: var(--text-accent);
-  --list-marker-color-collapsed: #97a0a4;
+  --list-marker-color-collapsed: var(--text-accent);
   --nav-item-color: #97a0a4;
   --nav-item-color-hover: #f1efe9;
   --nav-item-color-active: #f1efe9;
@@ -187,6 +237,7 @@ body {
   --tab-container-background: #1b2127;
   --tab-divider-color: #2c3640;
   --tab-outline-color: var(--text-accent);
+  --tab-outline-width: 2px;
   --titlebar-background: #12161b;
   --titlebar-background-focused: #1b2127;
   --titlebar-text-color: #97a0a4;
@@ -204,6 +255,7 @@ body {
   --table-header-background-hover: #4d768033;
   --table-header-border-color: #2c3640;
   --table-header-color: #f1efe9;
+  --table-header-weight: 600;
   --table-text-color: #f1efe9;
   --table-drag-handle-background: #232b32;
   --table-drag-handle-background-active: var(--text-accent);
@@ -214,6 +266,11 @@ body {
   --status-bar-background: #1b2127;
   --status-bar-border-color: #2c3640;
   --status-bar-text-color: #97a0a4;
+  --status-bar-font-size: var(--font-smallest);
+  --vault-profile-color: #97a0a4;
+  --vault-profile-color-hover: #f1efe9;
+  --vault-profile-font-weight: 400;
+  --vault-profile-font-size: var(--font-ui-smaller);
   --modal-background: #1b2127;
   --modal-border-color: #2c3640;
   --icon-color: #97a0a4;
@@ -227,7 +284,7 @@ body {
   --embed-border-start: 4px solid var(--text-accent);
   --embed-block-shadow-hover: 0 2px 10px rgba(77, 118, 128, 0.25);
   --inline-title-color: #f1efe9;
-  --inline-title-font: var(--tw-font-sans);
+  --inline-title-font: var(--tw-font-serif);
   --divider-color-hover: var(--text-accent);
   --divider-width-hover: 2px;
   --callout-info: #5f93b0;
@@ -326,10 +383,11 @@ body {
   --text-normal: #18272b;
   --text-muted: #52646a;
   --text-faint: #8a989b;
+  --tw-body-weight: 400;
   --text-on-accent: #eef3f0;
   --text-on-accent-inverted: #18272b;
   --text-accent: #9e5017;
-  --text-accent-hover: #b85f1c;
+  --text-accent-hover: #7a3a10;
   --text-error: #d06a52;
   --text-selection: #3d6b7644;
   --text-highlight-bg: rgba(224, 131, 42, 0.4);
@@ -337,9 +395,9 @@ body {
   --interactive-normal: #e7efeb;
   --interactive-hover: #f2f7f4;
   --interactive-accent: var(--text-accent);
-  --interactive-accent-hover: #b85f1c;
+  --interactive-accent-hover: #7a3a10;
   --link-color: var(--text-accent);
-  --link-color-hover: #b85f1c;
+  --link-color-hover: #7a3a10;
   --link-decoration: underline;
   --link-decoration-hover: underline;
   --link-decoration-thickness: 0.07em;
@@ -348,7 +406,7 @@ body {
   --link-unresolved-decoration-style: dashed;
   --link-unresolved-decoration-color: #52646a;
   --link-external-color: var(--text-accent);
-  --link-external-color-hover: #b85f1c;
+  --link-external-color-hover: #7a3a10;
   --link-external-decoration: underline;
   --code-background: #e7efeb;
   --code-white-space: pre-wrap;
@@ -368,17 +426,23 @@ body {
   --hr-color: #c4d2cd;
   --divider-color: #c4d2cd;
   --tag-color: var(--text-accent);
-  --tag-color-hover: #b85f1c;
+  --tag-color-hover: #7a3a10;
   --tag-background: #9e50171f;
   --tag-background-hover: #9e501733;
   --tag-border-color: transparent;
   --tag-border-color-hover: #9e501755;
   --checkbox-color: var(--text-accent);
-  --checkbox-color-hover: #b85f1c;
+  --checkbox-color-hover: #7a3a10;
   --checkbox-marker-color: #eef3f0;
   --checkbox-border-color: #c4d2cd;
   --checkbox-border-color-hover: var(--text-accent);
   --checklist-done-color: #52646a;
+  --tw-task-progress: #3d6b76;
+  --tw-task-fwd: #3f6274;
+  --tw-task-sched: #3f656b;
+  --tw-task-question: #655c7a;
+  --tw-task-important: #865a2a;
+  --tw-task-star: #9e5017;
   --pill-color: #18272b;
   --pill-color-hover: #18272b;
   --pill-color-remove: #52646a;
@@ -389,7 +453,7 @@ body {
   --pill-border-color-hover: var(--text-accent);
   --list-marker-color: #52646a;
   --list-marker-color-hover: var(--text-accent);
-  --list-marker-color-collapsed: #52646a;
+  --list-marker-color-collapsed: var(--text-accent);
   --nav-item-color: #52646a;
   --nav-item-color-hover: #18272b;
   --nav-item-color-active: #18272b;
@@ -402,6 +466,7 @@ body {
   --tab-container-background: #e7efeb;
   --tab-divider-color: #c4d2cd;
   --tab-outline-color: var(--text-accent);
+  --tab-outline-width: 2px;
   --titlebar-background: #dee7e4;
   --titlebar-background-focused: #e7efeb;
   --titlebar-text-color: #52646a;
@@ -419,6 +484,7 @@ body {
   --table-header-background-hover: #3d6b7633;
   --table-header-border-color: #c4d2cd;
   --table-header-color: #18272b;
+  --table-header-weight: 600;
   --table-text-color: #18272b;
   --table-drag-handle-background: #f2f7f4;
   --table-drag-handle-background-active: var(--text-accent);
@@ -429,6 +495,11 @@ body {
   --status-bar-background: #e7efeb;
   --status-bar-border-color: #c4d2cd;
   --status-bar-text-color: #52646a;
+  --status-bar-font-size: var(--font-smallest);
+  --vault-profile-color: #52646a;
+  --vault-profile-color-hover: #18272b;
+  --vault-profile-font-weight: 400;
+  --vault-profile-font-size: var(--font-ui-smaller);
   --modal-background: #e7efeb;
   --modal-border-color: #c4d2cd;
   --icon-color: #52646a;
@@ -442,7 +513,7 @@ body {
   --embed-border-start: 4px solid var(--text-accent);
   --embed-block-shadow-hover: 0 2px 10px rgba(61, 107, 118, 0.25);
   --inline-title-color: #18272b;
-  --inline-title-font: var(--tw-font-sans);
+  --inline-title-font: var(--tw-font-serif);
   --divider-color-hover: var(--text-accent);
   --divider-width-hover: 2px;
   --callout-info: #5f93b0;
@@ -494,32 +565,45 @@ body {
   --metadata-property-background-active: #3d6b7633;
 }
 
-/* Note body reads in Fraunces (serif) -- the reading voice; UI chrome and headings answer in
-   Archivo. A touch larger (relative em, so the font-size slider still works), with the reading
-   OpenType features already used on the web surface (old-style, proportional figures; common
-   ligatures) and explicit optical sizing so Fraunces serves its sturdier text-size cuts here
-   rather than the high-contrast display ones. */
+/* Note body in Archivo (sans) -- the working voice; headings answer in Fraunces (serif), same
+   pairing as every other Try-Works surface. A touch larger (relative em, so the font-size
+   slider still works), at the per-mode reading weight (halation-compensated in dark), with
+   the reading OpenType features already used on the web surface (old-style, proportional
+   figures; common ligatures). text-wrap: pretty improves rag and kills orphans; headings keep
+   balance below. font-weight lands on the container, so bold/headings still win by cascade. */
 .markdown-preview-view, .markdown-source-view.mod-cm6 .cm-content {
   font-size: calc(1em * var(--tw-body-scale, 1.2));
-  font-optical-sizing: auto;
+  font-weight: var(--tw-body-weight, 400);
+  text-wrap: pretty;
   font-variant-numeric: oldstyle-nums proportional-nums; font-variant-ligatures: common-ligatures;
 }
-/* Headings in Archivo (sans): with the body serif, the voices swap -- sans headings mark the
-   structure, the serif body carries the reading. Tracking a touch tighter than before
-   (grotesques gain from it at display sizes; Fraunces didn't); weights stay from Obsidian's
-   --h*-weight. Discretionary ligatures dropped: they were a Fraunces feature, Archivo has none.
-   The note title itself is --inline-title-font above, not this selector. */
+/* Headings set in Fraunces (serif), matching every other Try-Works surface; body text and UI
+   chrome stay Archivo (sans) so the two read as distinct voices. Weights stay from Obsidian's
+   --h*-weight. The note title itself is --inline-title-font above, not this selector. */
 .markdown-rendered :is(h1, h2, h3, h4, h5, h6),
 .markdown-source-view.mod-cm6 :is(.HyperMD-header, .cm-header) {
-  font-family: var(--tw-font-sans); font-variation-settings: normal; letter-spacing: -0.015em; text-wrap: balance;
-  font-variant-ligatures: common-ligatures;
+  font-family: var(--tw-font-serif); font-variation-settings: normal; letter-spacing: -0.01em; text-wrap: balance;
+  font-variant-ligatures: common-ligatures discretionary-ligatures;
 }
-/* Blockquotes: the quoted voice shares the body's serif now (it used to be the one serif island
-   in a sans body); the sea tint (--blockquote-background-color, per mode above) and the accent
-   border carry the distinction instead. Emphasis needs no override anymore either -- em/i just
-   inherit Fraunces and render as its true italic. */
+/* Breathing room after headings (reading view): 1.4x the paragraph rhythm, in the heading's
+   own em so larger headings carry proportionally more air. Core keeps 2.5x above (via
+   --heading-spacing), so the hierarchy still reads top-heavy, as it should. Live preview's
+   equivalent is --p-spacing-empty in the body block above. Headings inside list items are
+   untouched -- core's `li h*` margin-zero rule is more specific. */
+.markdown-rendered :is(h1, h2, h3, h4, h5, h6) { margin-block-end: calc(var(--p-spacing) * 1.4); }
+/* Blockquotes read as a quoted voice, distinct from body: serif, like headings, over the sea
+   tint (--blockquote-background-color, per mode above) and the accent border. */
 .markdown-rendered blockquote, .cm-s-obsidian .HyperMD-quote {
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 4px 4px 0; font-family: var(--tw-font-serif);
+}
+/* Explicit belt-and-suspenders: emphasis/italic text should read as sans body text like
+   everything else around it, not switch typeface. Written directly (not relying on
+   --font-text-theme alone) in case Obsidian has its own internal default for em/i independent
+   of the theme's text-font hook. Blockquotes are the one deliberate exception (serif, above),
+   so they're excluded here. */
+.markdown-rendered em:not(blockquote *), .markdown-rendered i:not(blockquote *),
+.cm-s-obsidian .cm-em {
+  font-family: var(--tw-font-sans);
 }
 .markdown-rendered pre code, .cm-s-obsidian { font-feature-settings: "liga" 1, "calt" 1; }
 /* Properties panel in mono, for the key: value read. Obsidian's CSS-variable API has no documented
@@ -539,11 +623,10 @@ body {
 .footnote, .footnote-list-item, .footnote-list {
   background: var(--background-primary) !important;
 }
-/* Footnotes stay in the sans voice, upright: they're apparatus, not reading text, so they keep
-   Archivo against the serif body. Clipped sources also love arriving as wall-to-wall italics,
-   so emphasis inside a footnote flattens to upright instead of rendering as Fraunces italic.
-   Covers the footnotes panel, the reading-view footnote section, and live preview's footnote
-   definition lines. */
+/* Footnotes stay in the sans voice, upright: they're apparatus, not reading text. Clipped
+   sources love arriving as wall-to-wall italics, so emphasis inside a footnote flattens to
+   upright rather than rendering italic. Covers the footnotes panel, the reading-view footnote
+   section, and live preview's footnote definition lines. */
 .footnotes-view .footnote-content, .markdown-rendered .footnotes,
 .cm-s-obsidian .cm-line.HyperMD-footnote {
   font-family: var(--tw-font-sans); font-style: normal;
@@ -571,6 +654,185 @@ body {
   -webkit-mask: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272.5%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M7%207h10v10%27/%3E%3Cpath%20d%3D%27M7%2017%2017%207%27/%3E%3C/svg%3E) center / contain no-repeat;
   mask: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272.5%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M7%207h10v10%27/%3E%3Cpath%20d%3D%27M7%2017%2017%207%27/%3E%3C/svg%3E) center / contain no-repeat;
 }
+
+/* File-explorer icons (Style Settings: tw-nav-plain removes them). Folders swap closed/open
+   with their collapse state; the vault-root row is excluded; a small typed set covers pdf,
+   images, canvas and audio via data-path. See icon_uri() note: artwork is Obsidian's own
+   lucide set. */
+body:not(.tw-nav-plain) .workspace-leaf-content[data-type="file-explorer"] :is(.nav-folder-title-content, .nav-file-title-content)::before {
+  content: ""; display: inline-block; width: 0.95em; height: 0.95em; margin-inline-end: 0.4em;
+  vertical-align: -0.12em; background-color: currentColor; opacity: 0.8;
+  -webkit-mask: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M6%2022a2%202%200%200%201-2-2V4a2%202%200%200%201%202-2h8a2.4%202.4%200%200%201%201.704.706l3.588%203.588A2.4%202.4%200%200%201%2020%208v12a2%202%200%200%201-2%202z%27/%3E%3Cpath%20d%3D%27M14%202v5a1%201%200%200%200%201%201h5%27/%3E%3C/svg%3E) center / contain no-repeat;
+  mask: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M6%2022a2%202%200%200%201-2-2V4a2%202%200%200%201%202-2h8a2.4%202.4%200%200%201%201.704.706l3.588%203.588A2.4%202.4%200%200%201%2020%208v12a2%202%200%200%201-2%202z%27/%3E%3Cpath%20d%3D%27M14%202v5a1%201%200%200%200%201%201h5%27/%3E%3C/svg%3E) center / contain no-repeat;
+}
+body:not(.tw-nav-plain) .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title-content::before {
+  -webkit-mask-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M20%2020a2%202%200%200%200%202-2V8a2%202%200%200%200-2-2h-7.9a2%202%200%200%201-1.69-.9L9.6%203.9A2%202%200%200%200%207.93%203H4a2%202%200%200%200-2%202v13a2%202%200%200%200%202%202Z%27/%3E%3C/svg%3E);
+  mask-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M20%2020a2%202%200%200%200%202-2V8a2%202%200%200%200-2-2h-7.9a2%202%200%200%201-1.69-.9L9.6%203.9A2%202%200%200%200%207.93%203H4a2%202%200%200%200-2%202v13a2%202%200%200%200%202%202Z%27/%3E%3C/svg%3E);
+}
+body:not(.tw-nav-plain) .workspace-leaf-content[data-type="file-explorer"] .nav-folder:not(.is-collapsed) > .nav-folder-title .nav-folder-title-content::before {
+  -webkit-mask-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27m6%2014%201.5-2.9A2%202%200%200%201%209.24%2010H20a2%202%200%200%201%201.94%202.5l-1.54%206a2%202%200%200%201-1.95%201.5H4a2%202%200%200%201-2-2V5a2%202%200%200%201%202-2h3.9a2%202%200%200%201%201.69.9l.81%201.2a2%202%200%200%200%201.67.9H18a2%202%200%200%201%202%202v2%27/%3E%3C/svg%3E);
+  mask-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27m6%2014%201.5-2.9A2%202%200%200%201%209.24%2010H20a2%202%200%200%201%201.94%202.5l-1.54%206a2%202%200%200%201-1.95%201.5H4a2%202%200%200%201-2-2V5a2%202%200%200%201%202-2h3.9a2%202%200%200%201%201.69.9l.81%201.2a2%202%200%200%200%201.67.9H18a2%202%200%200%201%202%202v2%27/%3E%3C/svg%3E);
+}
+body:not(.tw-nav-plain) .workspace-leaf-content[data-type="file-explorer"] .nav-folder.mod-root > .nav-folder-title .nav-folder-title-content::before { display: none; }
+body:not(.tw-nav-plain) .workspace-leaf-content[data-type="file-explorer"] .nav-file-title:is([data-path$=".pdf" i]) .nav-file-title-content::before {
+  -webkit-mask-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M6%2022a2%202%200%200%201-2-2V4a2%202%200%200%201%202-2h8a2.4%202.4%200%200%201%201.704.706l3.588%203.588A2.4%202.4%200%200%201%2020%208v12a2%202%200%200%201-2%202z%27/%3E%3Cpath%20d%3D%27M14%202v5a1%201%200%200%200%201%201h5%27/%3E%3Cpath%20d%3D%27M10%209H8%27/%3E%3Cpath%20d%3D%27M16%2013H8%27/%3E%3Cpath%20d%3D%27M16%2017H8%27/%3E%3C/svg%3E);
+  mask-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M6%2022a2%202%200%200%201-2-2V4a2%202%200%200%201%202-2h8a2.4%202.4%200%200%201%201.704.706l3.588%203.588A2.4%202.4%200%200%201%2020%208v12a2%202%200%200%201-2%202z%27/%3E%3Cpath%20d%3D%27M14%202v5a1%201%200%200%200%201%201h5%27/%3E%3Cpath%20d%3D%27M10%209H8%27/%3E%3Cpath%20d%3D%27M16%2013H8%27/%3E%3Cpath%20d%3D%27M16%2017H8%27/%3E%3C/svg%3E);
+}
+body:not(.tw-nav-plain) .workspace-leaf-content[data-type="file-explorer"] .nav-file-title:is([data-path$=".png" i], [data-path$=".jpg" i], [data-path$=".jpeg" i], [data-path$=".webp" i], [data-path$=".gif" i], [data-path$=".svg" i], [data-path$=".avif" i], [data-path$=".bmp" i]) .nav-file-title-content::before {
+  -webkit-mask-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%2718%27%20height%3D%2718%27%20rx%3D%272%27/%3E%3Ccircle%20cx%3D%279%27%20cy%3D%279%27%20r%3D%272%27/%3E%3Cpath%20d%3D%27m21%2015-3.086-3.086a2%202%200%200%200-2.828%200L6%2021%27/%3E%3C/svg%3E);
+  mask-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%2718%27%20height%3D%2718%27%20rx%3D%272%27/%3E%3Ccircle%20cx%3D%279%27%20cy%3D%279%27%20r%3D%272%27/%3E%3Cpath%20d%3D%27m21%2015-3.086-3.086a2%202%200%200%200-2.828%200L6%2021%27/%3E%3C/svg%3E);
+}
+body:not(.tw-nav-plain) .workspace-leaf-content[data-type="file-explorer"] .nav-file-title:is([data-path$=".canvas" i]) .nav-file-title-content::before {
+  -webkit-mask-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%277%27%20height%3D%279%27%20rx%3D%271%27/%3E%3Crect%20x%3D%2714%27%20y%3D%273%27%20width%3D%277%27%20height%3D%275%27%20rx%3D%271%27/%3E%3Crect%20x%3D%2714%27%20y%3D%2712%27%20width%3D%277%27%20height%3D%279%27%20rx%3D%271%27/%3E%3Crect%20x%3D%273%27%20y%3D%2716%27%20width%3D%277%27%20height%3D%275%27%20rx%3D%271%27/%3E%3C/svg%3E);
+  mask-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%277%27%20height%3D%279%27%20rx%3D%271%27/%3E%3Crect%20x%3D%2714%27%20y%3D%273%27%20width%3D%277%27%20height%3D%275%27%20rx%3D%271%27/%3E%3Crect%20x%3D%2714%27%20y%3D%2712%27%20width%3D%277%27%20height%3D%279%27%20rx%3D%271%27/%3E%3Crect%20x%3D%273%27%20y%3D%2716%27%20width%3D%277%27%20height%3D%275%27%20rx%3D%271%27/%3E%3C/svg%3E);
+}
+body:not(.tw-nav-plain) .workspace-leaf-content[data-type="file-explorer"] .nav-file-title:is([data-path$=".mp3" i], [data-path$=".m4a" i], [data-path$=".wav" i], [data-path$=".ogg" i], [data-path$=".flac" i]) .nav-file-title-content::before {
+  -webkit-mask-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M9%2018V5l12-2v13%27/%3E%3Ccircle%20cx%3D%276%27%20cy%3D%2718%27%20r%3D%273%27/%3E%3Ccircle%20cx%3D%2718%27%20cy%3D%2716%27%20r%3D%273%27/%3E%3C/svg%3E);
+  mask-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M9%2018V5l12-2v13%27/%3E%3Ccircle%20cx%3D%276%27%20cy%3D%2718%27%20r%3D%273%27/%3E%3Ccircle%20cx%3D%2718%27%20cy%3D%2716%27%20r%3D%273%27/%3E%3C/svg%3E);
+}
+
+/* Alternative task states -- see _task_rules() docstring. */
+.markdown-rendered li.task-list-item[data-task=">"] > input.task-list-item-checkbox,
+.cm-s-obsidian .HyperMD-task-line[data-task=">"] .task-list-item-checkbox {
+  background-color: transparent; border-color: var(--tw-task-fwd);
+}
+.markdown-rendered li.task-list-item[data-task=">"] > input.task-list-item-checkbox::after,
+.cm-s-obsidian .HyperMD-task-line[data-task=">"] .task-list-item-checkbox::after {
+  content: "→"; position: static; display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%; background-color: transparent; -webkit-mask-image: none;
+  color: var(--tw-task-fwd); font-family: var(--tw-font-sans);
+  font-size: calc(var(--checkbox-size) * 0.72); font-weight: 700; line-height: 1;
+}
+.markdown-rendered li.task-list-item[data-task="<"] > input.task-list-item-checkbox,
+.cm-s-obsidian .HyperMD-task-line[data-task="<"] .task-list-item-checkbox {
+  background-color: transparent; border-color: var(--tw-task-sched);
+}
+.markdown-rendered li.task-list-item[data-task="<"] > input.task-list-item-checkbox::after,
+.cm-s-obsidian .HyperMD-task-line[data-task="<"] .task-list-item-checkbox::after {
+  content: "←"; position: static; display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%; background-color: transparent; -webkit-mask-image: none;
+  color: var(--tw-task-sched); font-family: var(--tw-font-sans);
+  font-size: calc(var(--checkbox-size) * 0.72); font-weight: 700; line-height: 1;
+}
+.markdown-rendered li.task-list-item[data-task="?"] > input.task-list-item-checkbox,
+.cm-s-obsidian .HyperMD-task-line[data-task="?"] .task-list-item-checkbox {
+  background-color: transparent; border-color: var(--tw-task-question);
+}
+.markdown-rendered li.task-list-item[data-task="?"] > input.task-list-item-checkbox::after,
+.cm-s-obsidian .HyperMD-task-line[data-task="?"] .task-list-item-checkbox::after {
+  content: "?"; position: static; display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%; background-color: transparent; -webkit-mask-image: none;
+  color: var(--tw-task-question); font-family: var(--tw-font-sans);
+  font-size: calc(var(--checkbox-size) * 0.72); font-weight: 700; line-height: 1;
+}
+.markdown-rendered li.task-list-item[data-task="!"] > input.task-list-item-checkbox,
+.cm-s-obsidian .HyperMD-task-line[data-task="!"] .task-list-item-checkbox {
+  background-color: transparent; border-color: var(--tw-task-important);
+}
+.markdown-rendered li.task-list-item[data-task="!"] > input.task-list-item-checkbox::after,
+.cm-s-obsidian .HyperMD-task-line[data-task="!"] .task-list-item-checkbox::after {
+  content: "!"; position: static; display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%; background-color: transparent; -webkit-mask-image: none;
+  color: var(--tw-task-important); font-family: var(--tw-font-sans);
+  font-size: calc(var(--checkbox-size) * 0.72); font-weight: 700; line-height: 1;
+}
+.markdown-rendered li.task-list-item[data-task="*"] > input.task-list-item-checkbox,
+.cm-s-obsidian .HyperMD-task-line[data-task="*"] .task-list-item-checkbox {
+  background-color: transparent; border-color: var(--tw-task-star);
+}
+.markdown-rendered li.task-list-item[data-task="*"] > input.task-list-item-checkbox::after,
+.cm-s-obsidian .HyperMD-task-line[data-task="*"] .task-list-item-checkbox::after {
+  content: "★"; position: static; display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%; background-color: transparent; -webkit-mask-image: none;
+  color: var(--tw-task-star); font-family: var(--tw-font-sans);
+  font-size: calc(var(--checkbox-size) * 0.72); font-weight: 700; line-height: 1;
+}
+.markdown-rendered li.task-list-item[data-task="/"] > input.task-list-item-checkbox,
+.cm-s-obsidian .HyperMD-task-line[data-task="/"] .task-list-item-checkbox {
+  background-color: transparent; border-color: var(--tw-task-progress);
+}
+.markdown-rendered li.task-list-item[data-task="/"] > input.task-list-item-checkbox::after,
+.cm-s-obsidian .HyperMD-task-line[data-task="/"] .task-list-item-checkbox::after {
+  content: ""; position: static; display: block; width: 100%; height: 100%;
+  -webkit-mask-image: none; border-radius: inherit;
+  background: linear-gradient(90deg, var(--tw-task-progress) 50%, transparent 50%);
+}
+.markdown-rendered li.task-list-item[data-task="-"],
+.cm-s-obsidian .HyperMD-task-line[data-task="-"] {
+  color: var(--text-faint); text-decoration: line-through; text-decoration-color: var(--text-faint);
+}
+.markdown-rendered li.task-list-item[data-task="-"] > input.task-list-item-checkbox,
+.cm-s-obsidian .HyperMD-task-line[data-task="-"] .task-list-item-checkbox {
+  background-color: transparent; border-color: var(--text-faint);
+}
+.markdown-rendered li.task-list-item[data-task="-"] > input.task-list-item-checkbox::after,
+.cm-s-obsidian .HyperMD-task-line[data-task="-"] .task-list-item-checkbox::after {
+  content: "\2013"; position: static; display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%; background-color: transparent; -webkit-mask-image: none;
+  color: var(--text-faint); font-weight: 700; line-height: 1;
+}
+
+/* Focus mode (Style Settings: tw-focus). Chrome recedes until pointed at; the note stands alone.
+   Restores on hover or keyboard focus within. */
+body.tw-focus :is(.workspace-tab-header-container, .view-header, .workspace-ribbon, .status-bar) {
+  opacity: 0.25; transition: opacity 0.2s ease;
+}
+body.tw-focus :is(.workspace-tab-header-container, .view-header, .workspace-ribbon, .status-bar):is(:hover, :focus-within) {
+  opacity: 1;
+}
+/* Seamless embeds (default; Style Settings tw-embed-frames restores the framed look). Transclusions
+   read as part of the note: no tint, border or title; the open-link affordance appears on hover. */
+body:not(.tw-embed-frames) .markdown-rendered .markdown-embed,
+body:not(.tw-embed-frames) .markdown-source-view .markdown-embed {
+  background-color: transparent; border: none; padding: 0;
+}
+body:not(.tw-embed-frames) .markdown-embed-title { display: none; }
+body:not(.tw-embed-frames) .markdown-embed-link { opacity: 0; transition: opacity 0.15s ease; }
+body:not(.tw-embed-frames) .markdown-embed:hover .markdown-embed-link { opacity: 1; }
+/* Images: soft corners; a pipe caption (![[img.png|caption]]) renders as a quiet figcaption. Alt
+   texts that are just file names (Obsidian's fallback when no caption is given) are excluded. */
+.markdown-rendered .image-embed img { border-radius: 4px; }
+.markdown-rendered .image-embed[alt]:not([alt=""]):not([alt$=".png" i]):not([alt$=".jpg" i]):not([alt$=".jpeg" i]):not([alt$=".webp" i]):not([alt$=".gif" i]):not([alt$=".svg" i]):not([alt$=".bmp" i])::after {
+  content: attr(alt); display: block; font-family: var(--tw-font-sans); font-size: 0.82em;
+  color: var(--text-muted); text-align: center; margin-top: 0.35em;
+}
+/* Per-note gallery helper (Minimal's composable-cssclasses idea): add `cssclasses: img-grid` to a
+   note's frontmatter and consecutive images in one paragraph tile into a grid (reading view). */
+.markdown-preview-view.img-grid .markdown-preview-section p:has(> .image-embed) {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.markdown-preview-view.img-grid .markdown-preview-section p > .image-embed { flex: 1 1 240px; min-width: 0; }
+.markdown-preview-view.img-grid .markdown-preview-section p > .image-embed img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+/* Lists. Bullets are short accent dashes -- an explicit owner call to let the one warm mark walk
+   the margin; ordered numbers stay muted so it's the dash alone that carries it. Nested dashes
+   drop to the muted marker colour, so depth reads by temperature, and core's higher-specificity
+   is-collapsed rule still wins in reading view -- a folded marker signals accent + halo at any
+   depth. Hanging offset -0.95em (stock -0.8em) keeps air between dash and text; the editor depth
+   selector is best-effort against CM6's numbered line classes, inert if a future version drops
+   them. Ordered markers take muted tabular old-style figures so multi-digit lists column-align
+   quietly. */
+.markdown-rendered .list-bullet { margin-inline-start: -0.95em; }
+.list-bullet::after {
+  width: 0.55em; height: 0.12em; border-radius: 1px;
+  background-color: var(--text-accent);
+}
+.markdown-rendered li li .list-bullet::after,
+.cm-s-obsidian [class*="HyperMD-list-line-"]:not(.HyperMD-list-line-1):not(.HyperMD-list-line-nobullet) .list-bullet::after {
+  background-color: var(--list-marker-color);
+}
+.markdown-rendered :is(ol, ul) > li::marker { color: var(--text-muted); }
+.markdown-rendered ol > li::marker { font-variant-numeric: tabular-nums oldstyle-nums; }
+/* Fenced code blocks get a hairline so they separate from same-tone chrome (reading view; the
+   editor draws code blocks per-line, where a border would fragment). */
+.markdown-rendered pre { border: 1px solid var(--background-modifier-border); }
+/* Phone: the desktop-tuned 0.75em Properties type is too small under a thumb; row heights are
+   already restored by core's own .is-phone metadata override. */
+body.is-phone {
+  --metadata-label-font-size: 0.9em; --metadata-input-font-size: 0.9em;
+}
+
 /* File explorer: slightly smaller labels that wrap to a second/third line instead of truncating. */
 .workspace-leaf-content[data-type="file-explorer"] .tree-item-self { height: auto; }
 .workspace-leaf-content[data-type="file-explorer"] .tree-item-inner {
@@ -578,15 +840,18 @@ body {
 }
 
 /* Style Settings escape hatches: class present reverts that one piece (to Obsidian stock, or
-   to the earlier Try-Works voice). Font stack literal in tw-body-sans for the same reason the
+   to the other Try-Works voice). Font stack literal in tw-body-serif for the same reason the
    three theme font hooks above are literal. */
-body.tw-headings-serif { --inline-title-font: var(--tw-font-serif); }
-body.tw-headings-serif .markdown-rendered :is(h1, h2, h3, h4, h5, h6),
-body.tw-headings-serif .markdown-source-view.mod-cm6 :is(.HyperMD-header, .cm-header) {
-  font-family: var(--tw-font-serif); letter-spacing: -0.01em;
-  font-variant-ligatures: common-ligatures discretionary-ligatures;
+body.tw-headings-sans { --inline-title-font: var(--tw-font-sans); }
+body.tw-headings-sans .markdown-rendered :is(h1, h2, h3, h4, h5, h6),
+body.tw-headings-sans .markdown-source-view.mod-cm6 :is(.HyperMD-header, .cm-header) {
+  font-family: var(--tw-font-sans); letter-spacing: -0.015em;
+  font-variant-ligatures: common-ligatures;
 }
-body.tw-body-sans { --font-text-theme: "Archivo", system-ui, sans-serif; }
+body.tw-body-serif { --font-text-theme: "Fraunces", Georgia, serif; }
+body.tw-body-serif .markdown-preview-view, body.tw-body-serif .markdown-source-view.mod-cm6 .cm-content {
+  font-optical-sizing: auto;
+}
 body.tw-explorer-truncate .workspace-leaf-content[data-type="file-explorer"] .tree-item-inner {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }

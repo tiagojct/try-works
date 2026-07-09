@@ -1,0 +1,477 @@
+{
+  "hidesExplorerArrows": false,
+  "file": "file",
+  "folder": "folder",
+  "folderExpanded": "folder-open",
+  "rootFolder": "folder",
+  "rootFolderExpanded": "folder-open",
+  "iconDefinitions": {
+    "file": {
+      "iconPath": "./tw-file.svg"
+    },
+    "pdf": {
+      "iconPath": "./tw-pdf.svg"
+    },
+    "image": {
+      "iconPath": "./tw-image.svg"
+    },
+    "audio": {
+      "iconPath": "./tw-audio.svg"
+    },
+    "video": {
+      "iconPath": "./tw-video.svg"
+    },
+    "archive": {
+      "iconPath": "./tw-archive.svg"
+    },
+    "py": {
+      "iconPath": "./tw-py.svg"
+    },
+    "r": {
+      "iconPath": "./tw-r.svg"
+    },
+    "ipynb": {
+      "iconPath": "./tw-ipynb.svg"
+    },
+    "qmd": {
+      "iconPath": "./tw-qmd.svg"
+    },
+    "rmd": {
+      "iconPath": "./tw-rmd.svg"
+    },
+    "md": {
+      "iconPath": "./tw-md.svg"
+    },
+    "js": {
+      "iconPath": "./tw-js.svg"
+    },
+    "ts": {
+      "iconPath": "./tw-ts.svg"
+    },
+    "jsx": {
+      "iconPath": "./tw-jsx.svg"
+    },
+    "json": {
+      "iconPath": "./tw-json.svg"
+    },
+    "yaml": {
+      "iconPath": "./tw-yaml.svg"
+    },
+    "toml": {
+      "iconPath": "./tw-toml.svg"
+    },
+    "csv": {
+      "iconPath": "./tw-csv.svg"
+    },
+    "xml": {
+      "iconPath": "./tw-xml.svg"
+    },
+    "html": {
+      "iconPath": "./tw-html.svg"
+    },
+    "css": {
+      "iconPath": "./tw-css.svg"
+    },
+    "svg": {
+      "iconPath": "./tw-svg.svg"
+    },
+    "sh": {
+      "iconPath": "./tw-sh.svg"
+    },
+    "sql": {
+      "iconPath": "./tw-sql.svg"
+    },
+    "tex": {
+      "iconPath": "./tw-tex.svg"
+    },
+    "bib": {
+      "iconPath": "./tw-bib.svg"
+    },
+    "typ": {
+      "iconPath": "./tw-typ.svg"
+    },
+    "lua": {
+      "iconPath": "./tw-lua.svg"
+    },
+    "rs": {
+      "iconPath": "./tw-rs.svg"
+    },
+    "go": {
+      "iconPath": "./tw-go.svg"
+    },
+    "c": {
+      "iconPath": "./tw-c.svg"
+    },
+    "cpp": {
+      "iconPath": "./tw-cpp.svg"
+    },
+    "java": {
+      "iconPath": "./tw-java.svg"
+    },
+    "rb": {
+      "iconPath": "./tw-rb.svg"
+    },
+    "php": {
+      "iconPath": "./tw-php.svg"
+    },
+    "swift": {
+      "iconPath": "./tw-swift.svg"
+    },
+    "make": {
+      "iconPath": "./tw-make.svg"
+    },
+    "docker": {
+      "iconPath": "./tw-docker.svg"
+    },
+    "license": {
+      "iconPath": "./tw-license.svg"
+    },
+    "readme": {
+      "iconPath": "./tw-readme.svg"
+    },
+    "git": {
+      "iconPath": "./tw-git.svg"
+    },
+    "env": {
+      "iconPath": "./tw-env.svg"
+    },
+    "lock": {
+      "iconPath": "./tw-lock.svg"
+    },
+    "cff": {
+      "iconPath": "./tw-cff.svg"
+    },
+    "txt": {
+      "iconPath": "./tw-txt.svg"
+    },
+    "log": {
+      "iconPath": "./tw-log.svg"
+    },
+    "font": {
+      "iconPath": "./tw-font.svg"
+    },
+    "xlsx": {
+      "iconPath": "./tw-xlsx.svg"
+    },
+    "docx": {
+      "iconPath": "./tw-docx.svg"
+    },
+    "pptx": {
+      "iconPath": "./tw-pptx.svg"
+    },
+    "db": {
+      "iconPath": "./tw-db.svg"
+    },
+    "folder": {
+      "iconPath": "./tw-folder.svg"
+    },
+    "folder-open": {
+      "iconPath": "./tw-folder-open.svg"
+    },
+    "folder-src": {
+      "iconPath": "./tw-folder-src.svg"
+    },
+    "folder-src-open": {
+      "iconPath": "./tw-folder-src-open.svg"
+    },
+    "folder-data": {
+      "iconPath": "./tw-folder-data.svg"
+    },
+    "folder-data-open": {
+      "iconPath": "./tw-folder-data-open.svg"
+    },
+    "folder-docs": {
+      "iconPath": "./tw-folder-docs.svg"
+    },
+    "folder-docs-open": {
+      "iconPath": "./tw-folder-docs-open.svg"
+    },
+    "folder-test": {
+      "iconPath": "./tw-folder-test.svg"
+    },
+    "folder-test-open": {
+      "iconPath": "./tw-folder-test-open.svg"
+    },
+    "folder-scripts": {
+      "iconPath": "./tw-folder-scripts.svg"
+    },
+    "folder-scripts-open": {
+      "iconPath": "./tw-folder-scripts-open.svg"
+    },
+    "folder-assets": {
+      "iconPath": "./tw-folder-assets.svg"
+    },
+    "folder-assets-open": {
+      "iconPath": "./tw-folder-assets-open.svg"
+    },
+    "folder-meta": {
+      "iconPath": "./tw-folder-meta.svg"
+    },
+    "folder-meta-open": {
+      "iconPath": "./tw-folder-meta-open.svg"
+    }
+  },
+  "fileExtensions": {
+    "png": "image",
+    "jpg": "image",
+    "jpeg": "image",
+    "webp": "image",
+    "gif": "image",
+    "avif": "image",
+    "bmp": "image",
+    "ico": "image",
+    "tiff": "image",
+    "heic": "image",
+    "pdf": "pdf",
+    "zip": "archive",
+    "tar": "archive",
+    "gz": "archive",
+    "tgz": "archive",
+    "7z": "archive",
+    "rar": "archive",
+    "mp3": "audio",
+    "wav": "audio",
+    "m4a": "audio",
+    "ogg": "audio",
+    "flac": "audio",
+    "mp4": "video",
+    "mov": "video",
+    "mkv": "video",
+    "webm": "video",
+    "py": "py",
+    "pyi": "py",
+    "r": "r",
+    "ipynb": "ipynb",
+    "qmd": "qmd",
+    "rmd": "rmd",
+    "md": "md",
+    "markdown": "md",
+    "js": "js",
+    "mjs": "js",
+    "cjs": "js",
+    "ts": "ts",
+    "mts": "ts",
+    "jsx": "jsx",
+    "tsx": "jsx",
+    "json": "json",
+    "jsonc": "json",
+    "json5": "json",
+    "yaml": "yaml",
+    "yml": "yaml",
+    "toml": "toml",
+    "csv": "csv",
+    "tsv": "csv",
+    "xml": "xml",
+    "html": "html",
+    "htm": "html",
+    "css": "css",
+    "scss": "css",
+    "sass": "css",
+    "less": "css",
+    "svg": "svg",
+    "sh": "sh",
+    "zsh": "sh",
+    "bash": "sh",
+    "fish": "sh",
+    "sql": "sql",
+    "tex": "tex",
+    "sty": "tex",
+    "cls": "tex",
+    "bib": "bib",
+    "typ": "typ",
+    "lua": "lua",
+    "rs": "rs",
+    "go": "go",
+    "c": "c",
+    "h": "c",
+    "cpp": "cpp",
+    "hpp": "cpp",
+    "cc": "cpp",
+    "hh": "cpp",
+    "java": "java",
+    "rb": "rb",
+    "php": "php",
+    "swift": "swift",
+    "mk": "make",
+    "dockerfile": "docker",
+    "gitignore": "git",
+    "env": "env",
+    "lock": "lock",
+    "cff": "cff",
+    "txt": "txt",
+    "log": "log",
+    "ttf": "font",
+    "otf": "font",
+    "woff": "font",
+    "woff2": "font",
+    "xlsx": "xlsx",
+    "xls": "xlsx",
+    "ods": "xlsx",
+    "docx": "docx",
+    "doc": "docx",
+    "odt": "docx",
+    "pptx": "pptx",
+    "ppt": "pptx",
+    "odp": "pptx",
+    "db": "db",
+    "sqlite": "db",
+    "duckdb": "db",
+    "parquet": "db",
+    "feather": "db"
+  },
+  "fileNames": {
+    ".zshrc": "sh",
+    ".zprofile": "sh",
+    ".bashrc": "sh",
+    ".bash_profile": "sh",
+    "makefile": "make",
+    "justfile": "make",
+    "dockerfile": "docker",
+    ".dockerignore": "docker",
+    "docker-compose.yml": "docker",
+    "compose.yaml": "docker",
+    "license": "license",
+    "license.md": "license",
+    "license.txt": "license",
+    "licence": "license",
+    "copying": "license",
+    "license-code": "license",
+    "license-design": "license",
+    "readme": "readme",
+    "readme.md": "readme",
+    "readme.txt": "readme",
+    ".gitignore": "git",
+    ".gitattributes": "git",
+    ".gitmodules": "git",
+    ".env": "env",
+    ".env.local": "env",
+    ".envrc": "env",
+    "package-lock.json": "lock",
+    "renv.lock": "lock",
+    "poetry.lock": "lock",
+    "uv.lock": "lock",
+    "cargo.lock": "lock",
+    "citation.cff": "cff"
+  },
+  "folderNames": {
+    "src": "folder-src",
+    "lib": "folder-src",
+    "data": "folder-data",
+    "datasets": "folder-data",
+    "raw": "folder-data",
+    "docs": "folder-docs",
+    "doc": "folder-docs",
+    "notes": "folder-docs",
+    "notebooks": "folder-docs",
+    "tests": "folder-test",
+    "test": "folder-test",
+    "__tests__": "folder-test",
+    "spec": "folder-test",
+    "scripts": "folder-scripts",
+    "bin": "folder-scripts",
+    "tools": "folder-scripts",
+    ".git": "folder-scripts",
+    "assets": "folder-assets",
+    "static": "folder-assets",
+    "public": "folder-assets",
+    "resources": "folder-assets",
+    "fonts": "folder-assets",
+    "img": "folder-assets",
+    "images": "folder-assets",
+    "figures": "folder-assets",
+    "config": "folder-meta",
+    ".config": "folder-meta",
+    ".github": "folder-meta",
+    ".vscode": "folder-meta",
+    "node_modules": "folder-meta",
+    "venv": "folder-meta",
+    ".venv": "folder-meta",
+    "renv": "folder-meta",
+    "dist": "folder-meta",
+    "build": "folder-meta",
+    "out": "folder-meta",
+    "target": "folder-meta",
+    "__pycache__": "folder-meta",
+    ".cache": "folder-meta"
+  },
+  "folderNamesExpanded": {
+    "src": "folder-src-open",
+    "lib": "folder-src-open",
+    "data": "folder-data-open",
+    "datasets": "folder-data-open",
+    "raw": "folder-data-open",
+    "docs": "folder-docs-open",
+    "doc": "folder-docs-open",
+    "notes": "folder-docs-open",
+    "notebooks": "folder-docs-open",
+    "tests": "folder-test-open",
+    "test": "folder-test-open",
+    "__tests__": "folder-test-open",
+    "spec": "folder-test-open",
+    "scripts": "folder-scripts-open",
+    "bin": "folder-scripts-open",
+    "tools": "folder-scripts-open",
+    ".git": "folder-scripts-open",
+    "assets": "folder-assets-open",
+    "static": "folder-assets-open",
+    "public": "folder-assets-open",
+    "resources": "folder-assets-open",
+    "fonts": "folder-assets-open",
+    "img": "folder-assets-open",
+    "images": "folder-assets-open",
+    "figures": "folder-assets-open",
+    "config": "folder-meta-open",
+    ".config": "folder-meta-open",
+    ".github": "folder-meta-open",
+    ".vscode": "folder-meta-open",
+    "node_modules": "folder-meta-open",
+    "venv": "folder-meta-open",
+    ".venv": "folder-meta-open",
+    "renv": "folder-meta-open",
+    "dist": "folder-meta-open",
+    "build": "folder-meta-open",
+    "out": "folder-meta-open",
+    "target": "folder-meta-open",
+    "__pycache__": "folder-meta-open",
+    ".cache": "folder-meta-open"
+  },
+  "languageIds": {
+    "python": "py",
+    "r": "r",
+    "quarto": "qmd",
+    "rmd": "rmd",
+    "markdown": "md",
+    "javascript": "js",
+    "typescript": "ts",
+    "javascriptreact": "jsx",
+    "typescriptreact": "jsx",
+    "json": "json",
+    "jsonc": "json",
+    "yaml": "yaml",
+    "toml": "toml",
+    "xml": "xml",
+    "html": "html",
+    "css": "css",
+    "scss": "css",
+    "shellscript": "sh",
+    "sql": "sql",
+    "latex": "tex",
+    "bibtex": "bib",
+    "typst": "typ",
+    "lua": "lua",
+    "rust": "rs",
+    "go": "go",
+    "c": "c",
+    "cpp": "cpp",
+    "java": "java",
+    "ruby": "rb",
+    "php": "php",
+    "swift": "swift",
+    "makefile": "make",
+    "dockerfile": "docker",
+    "git-commit": "git",
+    "git-rebase": "git",
+    "plaintext": "txt",
+    "log": "log"
+  }
+}

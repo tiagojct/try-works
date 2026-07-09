@@ -125,6 +125,109 @@ def _code_style_rules(codem):
     return "\n".join(out)
 
 
+_TASK_GLYPHS = [(">", "fwd", "→"), ("<", "sched", "←"), ("?", "question", "?"),
+                ("!", "important", "!"), ("*", "star", "★")]
+
+
+def _task_rules():
+    """Alternative checkbox states (- [/] [>] [<] [?] [!] [*] [-]), the Minimal/Things convention.
+    data-task is set by Obsidian itself on both the reading-view <li> and the live-preview line
+    (app.css 1.12 styles [data-task="x"] through exactly these selectors), so this is the most
+    official hook available. Reading view uses the child combinator so nested tasks each match
+    their own <li>; an editor line is its own element, so no cross-state leakage there. The
+    ::after rules explicitly neutralise core's :checked checkmark (absolute position + SVG mask +
+    marker background) because Obsidian marks any non-space state as checked. Colours are the
+    per-mode --tw-task-* vars emitted in blk(); done [x] and the untouched [ ] keep core styling."""
+    def sels(ch, after=False):
+        a = "::after" if after else ""
+        return ('.markdown-rendered li.task-list-item[data-task="%s"] > input.task-list-item-checkbox%s,\n'
+                '.cm-s-obsidian .HyperMD-task-line[data-task="%s"] .task-list-item-checkbox%s' % (ch, a, ch, a))
+    glyph_css = ('  content: "%s"; position: static; display: flex; align-items: center; justify-content: center;\n'
+                 "  width: 100%%; height: 100%%; background-color: transparent; -webkit-mask-image: none;\n"
+                 "  color: var(--tw-task-%s); font-family: var(--tw-font-sans);\n"
+                 "  font-size: calc(var(--checkbox-size) * 0.72); font-weight: 700; line-height: 1;")
+    out = []
+    for ch, key, glyph in _TASK_GLYPHS:
+        out.append("%s {\n  background-color: transparent; border-color: var(--tw-task-%s);\n}" % (sels(ch), key))
+        out.append("%s {\n%s\n}" % (sels(ch, True), glyph_css % (glyph, key)))
+    out.append("%s {\n  background-color: transparent; border-color: var(--tw-task-progress);\n}" % sels("/"))
+    out.append('%s {\n  content: ""; position: static; display: block; width: 100%%; height: 100%%;\n'
+               "  -webkit-mask-image: none; border-radius: inherit;\n"
+               "  background: linear-gradient(90deg, var(--tw-task-progress) 50%%, transparent 50%%);\n}" % sels("/", True))
+    out.append('.markdown-rendered li.task-list-item[data-task="-"],\n'
+               '.cm-s-obsidian .HyperMD-task-line[data-task="-"] {\n'
+               "  color: var(--text-faint); text-decoration: line-through; text-decoration-color: var(--text-faint);\n}")
+    out.append("%s {\n  background-color: transparent; border-color: var(--text-faint);\n}" % sels("-"))
+    out.append('%s {\n  content: "\\2013"; position: static; display: flex; align-items: center; justify-content: center;\n'
+               "  width: 100%%; height: 100%%; background-color: transparent; -webkit-mask-image: none;\n"
+               "  color: var(--text-faint); font-weight: 700; line-height: 1;\n}" % sels("-", True))
+    return ("/* Alternative task states -- see _task_rules() docstring. */\n" + "\n".join(out) + "\n")
+
+
+_FEATURES_CSS = """\
+/* Focus mode (Style Settings: tw-focus). Chrome recedes until pointed at; the note stands alone.
+   Restores on hover or keyboard focus within. */
+body.tw-focus :is(.workspace-tab-header-container, .view-header, .workspace-ribbon, .status-bar) {
+  opacity: 0.25; transition: opacity 0.2s ease;
+}
+body.tw-focus :is(.workspace-tab-header-container, .view-header, .workspace-ribbon, .status-bar):is(:hover, :focus-within) {
+  opacity: 1;
+}
+/* Seamless embeds (default; Style Settings tw-embed-frames restores the framed look). Transclusions
+   read as part of the note: no tint, border or title; the open-link affordance appears on hover. */
+body:not(.tw-embed-frames) .markdown-rendered .markdown-embed,
+body:not(.tw-embed-frames) .markdown-source-view .markdown-embed {
+  background-color: transparent; border: none; padding: 0;
+}
+body:not(.tw-embed-frames) .markdown-embed-title { display: none; }
+body:not(.tw-embed-frames) .markdown-embed-link { opacity: 0; transition: opacity 0.15s ease; }
+body:not(.tw-embed-frames) .markdown-embed:hover .markdown-embed-link { opacity: 1; }
+/* Images: soft corners; a pipe caption (![[img.png|caption]]) renders as a quiet figcaption. Alt
+   texts that are just file names (Obsidian's fallback when no caption is given) are excluded. */
+.markdown-rendered .image-embed img { border-radius: 4px; }
+.markdown-rendered .image-embed[alt]:not([alt=""]):not([alt$=".png" i]):not([alt$=".jpg" i]):not([alt$=".jpeg" i]):not([alt$=".webp" i]):not([alt$=".gif" i]):not([alt$=".svg" i]):not([alt$=".bmp" i])::after {
+  content: attr(alt); display: block; font-family: var(--tw-font-sans); font-size: 0.82em;
+  color: var(--text-muted); text-align: center; margin-top: 0.35em;
+}
+/* Per-note gallery helper (Minimal's composable-cssclasses idea): add `cssclasses: img-grid` to a
+   note's frontmatter and consecutive images in one paragraph tile into a grid (reading view). */
+.markdown-preview-view.img-grid .markdown-preview-section p:has(> .image-embed) {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.markdown-preview-view.img-grid .markdown-preview-section p > .image-embed { flex: 1 1 240px; min-width: 0; }
+.markdown-preview-view.img-grid .markdown-preview-section p > .image-embed img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+/* Lists. Bullets are short accent dashes -- an explicit owner call to let the one warm mark walk
+   the margin; ordered numbers stay muted so it's the dash alone that carries it. Nested dashes
+   drop to the muted marker colour, so depth reads by temperature, and core's higher-specificity
+   is-collapsed rule still wins in reading view -- a folded marker signals accent + halo at any
+   depth. Hanging offset -0.95em (stock -0.8em) keeps air between dash and text; the editor depth
+   selector is best-effort against CM6's numbered line classes, inert if a future version drops
+   them. Ordered markers take muted tabular old-style figures so multi-digit lists column-align
+   quietly. */
+.markdown-rendered .list-bullet { margin-inline-start: -0.95em; }
+.list-bullet::after {
+  width: 0.55em; height: 0.12em; border-radius: 1px;
+  background-color: var(--text-accent);
+}
+.markdown-rendered li li .list-bullet::after,
+.cm-s-obsidian [class*="HyperMD-list-line-"]:not(.HyperMD-list-line-1):not(.HyperMD-list-line-nobullet) .list-bullet::after {
+  background-color: var(--list-marker-color);
+}
+.markdown-rendered :is(ol, ul) > li::marker { color: var(--text-muted); }
+.markdown-rendered ol > li::marker { font-variant-numeric: tabular-nums oldstyle-nums; }
+/* Fenced code blocks get a hairline so they separate from same-tone chrome (reading view; the
+   editor draws code blocks per-line, where a border would fragment). */
+.markdown-rendered pre { border: 1px solid var(--background-modifier-border); }
+/* Phone: the desktop-tuned 0.75em Properties type is too small under a thumb; row heights are
+   already restored by core's own .is-phone metadata override. */
+body.is-phone {
+  --metadata-label-font-size: 0.9em; --metadata-input-font-size: 0.9em;
+}
+"""
+
+
 def _graph_map(m, n, faint):
     return {"line": m["border"], "text": m["text-muted"], "node": m["sea-bright"],
             "node-unresolved": faint, "node-focused": m["accent-bright"],
@@ -149,9 +252,11 @@ def _properties_map(m):
     below body text: JetBrains Mono at the same nominal size reads larger than
     a proportional face, so matching body size looked heavier than intended.
     Rows also sit tighter than stock (gap 3px -> 1px, row min-height 1.75x ->
-    1.4x the body font size): at the smaller mono size, stock spacing read as
-    double-spaced. Both are real vars consumed by .metadata-properties /
-    .metadata-container in app.css."""
+    1.4x --font-text-size, the base editor size -- not the 1.2x-scaled reading
+    body): at the smaller mono size, stock spacing read as double-spaced. Both
+    are real vars consumed by .metadata-properties / .metadata-container in
+    app.css; on phones, core's own .is-phone .metadata-container override sits
+    on a deeper element and wins, so mobile tap targets are untouched."""
     hover = m["surface"]
     return {"background": m["bg"], "border-color": m["border"],
             "divider-color": m["border"],
@@ -168,13 +273,17 @@ def _properties_map(m):
 def _settings_block(lit, cold):
     """Style Settings plugin (mgmeyers/obsidian-style-settings) metadata block.
     Each setting's id is the literal CSS variable/class name the plugin writes
-    to -- not just a label. Seven settings: enough to be useful without
+    to -- not just a label. Eleven settings: enough to be useful without
     re-exposing the whole token set (which would break single-source-of-truth).
     All class-toggle defaults are unchecked/absent, and the unconditional base
-    CSS keeps today's exact look -- the toggles are opt-in escape hatches back
-    to Obsidian stock or to the earlier Try-Works voice, not opt-in
-    enhancements, so a fresh install (plugin absent, or present but untouched)
-    always renders identically to today."""
+    CSS keeps the default look -- toggles are either opt-in modes (focus,
+    framed embeds) or escape hatches back to Obsidian stock / the other
+    Try-Works voice, so a fresh install (plugin absent, or present but
+    untouched) always renders identically to the shipped defaults.
+    Known limitation: the accent picker rewrites --text-accent and everything
+    chained to it, but --accent-h/s/l stay pinned to the brand accent (CSS
+    cannot decompose a hex var into HSL), so Obsidian's derived --color-accent
+    tints won't track a custom accent."""
     return ('''/* @settings
 name: Try-Works
 id: try-works
@@ -207,14 +316,34 @@ settings:
     min: 1.4
     max: 2.0
     step: 0.05
-  - id: tw-headings-serif
-    title: Serif headings (Fraunces)
-    description: Off (default) keeps Try-Works' sans (Archivo) headings.
+  - id: tw-headings-sans
+    title: Sans headings (match body)
+    description: Off (default) keeps Try-Works' serif (Fraunces) headings.
     type: class-toggle
     default: false
-  - id: tw-body-sans
-    title: Sans body text (Archivo)
-    description: Off (default) keeps Try-Works' serif (Fraunces) note body.
+  - id: tw-body-serif
+    title: Serif body text (Fraunces)
+    description: Off (default) keeps Try-Works' sans (Archivo) note body.
+    type: class-toggle
+    default: false
+  - id: tw-interface
+    title: Interface
+    type: heading
+    level: 1
+    collapsed: false
+  - id: tw-focus
+    title: Focus mode
+    description: Dim tabs, ribbon, header and status bar until hovered.
+    type: class-toggle
+    default: false
+  - id: tw-embed-frames
+    title: Framed embeds (Obsidian default)
+    description: Off (default) keeps Try-Works' seamless transclusions.
+    type: class-toggle
+    default: false
+  - id: tw-nav-plain
+    title: Plain file list (no icons)
+    description: Off (default) keeps folder and file icons in the explorer.
     type: class-toggle
     default: false
   - id: tw-explorer-truncate
@@ -238,6 +367,11 @@ def build_obsidian(D):
     def blk(m, sel):
         ah = hsl(m["accent"]); r = _ramp(m)
         faint = _mix(m["text-muted"], m["bg"], 0.4)
+        # Hover accent: brighter in dark mode, DEEPER in light mode. Light hovers must darken to hold
+        # WCAG AA -- accent-bright on the cold bg measures 3.55:1, under the 4.5 floor, while
+        # accent-deep clears it with margin. validate.py locks both pairs (lit accent-bright/bg,
+        # cold accent-deep/bg) so a palette edit can't silently reintroduce the failure.
+        hov = m["accent-bright"] if m["scheme"] == "dark" else m["accent-deep"]
         callout, graph, canvas, meta, code = (_callout_map(named), _graph_map(m, named, faint),
             _canvas_map(m, named), _properties_map(m), _code_syntax_map(m, codem))
         L = ["." + sel + " {",
@@ -276,20 +410,26 @@ def build_obsidian(D):
          "  --background-modifier-form-field: %s;" % m["surface"],
          "  --background-modifier-success: rgba(%s, 0.15);" % _rgbtriple(ext["kelp"]),
          "  --text-normal: %s;" % m["text"], "  --text-muted: %s;" % m["text-muted"], "  --text-faint: %s;" % faint,
+         # Reading weight, per mode: bright text on the near-black lit bg optically thins (halation), so
+         # the dark body reads at a hair over regular to hold its colour; the light bg has no halation,
+         # so cold stays at the true 400. Consumed as font-weight (not font-variation-settings) on the
+         # reading/edit surfaces below, so bold and headings still win by cascade. Archivo is a real
+         # variable font (wght 100-900), so 430 is interpolated, not faux-bold.
+         "  --tw-body-weight: %d;" % (430 if m["scheme"] == "dark" else 400),
          "  --text-on-accent: %s;" % m["on-accent"], "  --text-on-accent-inverted: %s;" % m["text"],
-         "  --text-accent: %s;" % m["accent"], "  --text-accent-hover: %s;" % m["accent-bright"],
+         "  --text-accent: %s;" % m["accent"], "  --text-accent-hover: %s;" % hov,
          "  --text-error: %s;" % ext["brick"],
          "  --text-selection: %s44;" % m["sea-bright"],
          "  --text-highlight-bg: rgba(%s, 0.4);" % _rgbtriple(fire["flame"]),
          "  --text-highlight-bg-active: rgba(%s, 0.6);" % _rgbtriple(fire["ember"]),
          "  --interactive-normal: %s;" % m["surface"], "  --interactive-hover: %s;" % m["surface-raised"],
-         "  --interactive-accent: var(--text-accent);", "  --interactive-accent-hover: %s;" % m["accent-bright"],
-         "  --link-color: var(--text-accent);", "  --link-color-hover: %s;" % m["accent-bright"],
+         "  --interactive-accent: var(--text-accent);", "  --interactive-accent-hover: %s;" % hov,
+         "  --link-color: var(--text-accent);", "  --link-color-hover: %s;" % hov,
          "  --link-decoration: underline;", "  --link-decoration-hover: underline;",
          "  --link-decoration-thickness: 0.07em;",
          "  --link-unresolved-color: %s;" % m["text-muted"], "  --link-unresolved-opacity: 0.7;",
          "  --link-unresolved-decoration-style: dashed;", "  --link-unresolved-decoration-color: %s;" % m["text-muted"],
-         "  --link-external-color: var(--text-accent);", "  --link-external-color-hover: %s;" % m["accent-bright"],
+         "  --link-external-color: var(--text-accent);", "  --link-external-color-hover: %s;" % hov,
          "  --link-external-decoration: underline;",
          "  --code-background: %s;" % m["surface"], "  --code-white-space: pre-wrap;",
         ]
@@ -300,14 +440,24 @@ def build_obsidian(D):
          # Explicit call: tags are one of the places the fire mark is allowed to show, alongside
          # links/checkboxes/focus. Accent/bg contrast already verified by validate.py (>=4.61:1 both
          # modes), so no separate light-mode darkening needed the way the cool tide hue required.
-         "  --tag-color: var(--text-accent);", "  --tag-color-hover: %s;" % m["accent-bright"],
+         "  --tag-color: var(--text-accent);", "  --tag-color-hover: %s;" % hov,
          "  --tag-background: %s1f;" % m["accent"],
          "  --tag-background-hover: %s33;" % m["accent"], "  --tag-border-color: transparent;",
          "  --tag-border-color-hover: %s55;" % m["accent"],
-         "  --checkbox-color: var(--text-accent);", "  --checkbox-color-hover: %s;" % m["accent-bright"],
+         "  --checkbox-color: var(--text-accent);", "  --checkbox-color-hover: %s;" % hov,
          "  --checkbox-marker-color: %s;" % m["on-accent"],
          "  --checkbox-border-color: %s;" % m["border"], "  --checkbox-border-color-hover: var(--text-accent);",
          "  --checklist-done-color: %s;" % m["text-muted"],
+         # Alternative task states (- [/] [>] [<] [?] [!] [*], Minimal/Things convention), rendered by
+         # the shared _task_rules() CSS at the bottom of this file. Hues follow the callout logic (cool
+         # named hues, light-safe in cold); star is ember -- checkboxes are already a sanctioned fire
+         # location (--checkbox-color above).
+         "  --tw-task-progress: %s;" % m["sea-bright"],
+         "  --tw-task-fwd: %s;" % _light_safe_hue(named["blue"], m),
+         "  --tw-task-sched: %s;" % _light_safe_hue(named["cyan"], m),
+         "  --tw-task-question: %s;" % _light_safe_hue(named["purple"], m),
+         "  --tw-task-important: %s;" % _light_safe_hue(named["yellow"], m),
+         "  --tw-task-star: %s;" % m["accent"],
          "  --pill-color: %s;" % m["text"], "  --pill-color-hover: %s;" % m["text"],
          "  --pill-color-remove: %s;" % m["text-muted"], "  --pill-color-remove-hover: %s;" % ext["brick"],
          # Property pills (author, aliases, ...) sit flat on the note like the rest of the Properties
@@ -317,7 +467,10 @@ def build_obsidian(D):
          "  --pill-background: transparent;", "  --pill-background-hover: %s33;" % m["sea-bright"],
          "  --pill-border-color: transparent;", "  --pill-border-color-hover: var(--text-accent);",
          "  --list-marker-color: %s;" % m["text-muted"], "  --list-marker-color-hover: var(--text-accent);",
-         "  --list-marker-color-collapsed: %s;" % m["text-muted"],
+         # Collapsed marker goes accent, restoring core's own affordance (this theme used to mute it):
+         # a closed bullet hides content, which is worth the one warm mark -- same sanctioned family as
+         # links/checkboxes/tags. Core pairs it with a halo via --background-modifier-active-hover.
+         "  --list-marker-color-collapsed: var(--text-accent);",
          "  --nav-item-color: %s;" % m["text-muted"], "  --nav-item-color-hover: %s;" % m["text"],
          "  --nav-item-color-active: %s;" % m["text"], "  --nav-item-background-hover: %s1f;" % m["sea-bright"],
          # A flat surface-raised swap reads fine in dark mode (lighter than a near-black bg) but washes
@@ -328,23 +481,32 @@ def build_obsidian(D):
          "  --tab-background-active: %s;" % m["bg"], "  --tab-text-color: %s;" % m["text-muted"],
          "  --tab-text-color-active: %s;" % m["text"], "  --tab-text-color-focused-active-current: %s;" % m["text"],
          "  --tab-container-background: %s;" % m["surface"], "  --tab-divider-color: %s;" % m["border"],
-         "  --tab-outline-color: var(--text-accent);",
+         # Width set alongside the colour: relying on Obsidian's default (0.5-1px, varies by context)
+         # made the accent outline near-invisible on some displays.
+         "  --tab-outline-color: var(--text-accent);", "  --tab-outline-width: 2px;",
          "  --titlebar-background: %s;" % m["bg"], "  --titlebar-background-focused: %s;" % m["surface"],
          "  --titlebar-text-color: %s;" % m["text-muted"], "  --titlebar-text-color-focused: %s;" % m["text"],
          "  --scrollbar-bg: transparent;", "  --scrollbar-thumb-bg: %s40;" % m["sea-bright"],
          "  --scrollbar-active-thumb-bg: %s66;" % m["sea-bright"],
          "  --table-background: %s;" % m["surface"],
+         # Alt rows deliberately equal --table-background: flat tables, no zebra. Row hover (below) is
+         # the location cue; a stripe read as noise against the calm sea surfaces.
          "  --table-border-color: %s;" % m["border"], "  --table-row-alt-background: %s;" % m["surface"],
          "  --table-row-background-hover: %s14;" % m["sea-bright"], "  --table-selection: %s22;" % m["accent"],
          "  --table-selection-border-color: var(--text-accent);",
          "  --table-header-background: %s;" % m["surface-raised"], "  --table-header-background-hover: %s33;" % m["sea-bright"],
          "  --table-header-border-color: %s;" % m["border"], "  --table-header-color: %s;" % m["text"],
+         "  --table-header-weight: 600;",
          "  --table-text-color: %s;" % m["text"],
          "  --table-drag-handle-background: %s;" % m["surface-raised"], "  --table-drag-handle-background-active: var(--text-accent);",
          "  --table-drag-handle-color: %s;" % m["text-muted"], "  --table-drag-handle-color-active: %s;" % m["on-accent"],
          "  --ribbon-background: %s;" % m["bg"], "  --ribbon-background-collapsed: %s;" % m["bg"],
+         # Quieter chrome: status bar drops to the smallest UI size, vault name recedes to muted
+         # weight-400 small type (all official vars) -- the note, not the workspace, is the subject.
          "  --status-bar-background: %s;" % m["surface"], "  --status-bar-border-color: %s;" % m["border"],
-         "  --status-bar-text-color: %s;" % m["text-muted"],
+         "  --status-bar-text-color: %s;" % m["text-muted"], "  --status-bar-font-size: var(--font-smallest);",
+         "  --vault-profile-color: %s;" % m["text-muted"], "  --vault-profile-color-hover: %s;" % m["text"],
+         "  --vault-profile-font-weight: 400;", "  --vault-profile-font-size: var(--font-ui-smaller);",
          "  --modal-background: %s;" % m["surface"], "  --modal-border-color: %s;" % m["border"],
          "  --icon-color: %s;" % m["text-muted"], "  --icon-color-hover: %s;" % m["text"],
          "  --icon-color-active: var(--text-accent);", "  --icon-color-focused: var(--text-accent);",
@@ -352,7 +514,7 @@ def build_obsidian(D):
          "  --search-result-background: %s;" % m["surface"],
          "  --embed-background: %s;" % m["surface"], "  --embed-border-start: 4px solid var(--text-accent);",
          "  --embed-block-shadow-hover: 0 2px 10px rgba(%s, 0.25);" % _rgbtriple(m["sea-bright"]),
-         "  --inline-title-color: %s;" % m["text"], "  --inline-title-font: var(--tw-font-sans);",
+         "  --inline-title-color: %s;" % m["text"], "  --inline-title-font: var(--tw-font-serif);",
          "  --divider-color-hover: var(--text-accent);", "  --divider-width-hover: 2px;",
         ]
         L += ["  --callout-%s: %s;" % (k, v) for k, v in callout.items()]
@@ -369,6 +531,62 @@ def build_obsidian(D):
              "stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'>"
              "<path d='M7 7h10v10'/><path d='M7 17 17 7'/></svg>")
     arrow_uri = "data:image/svg+xml," + quote(arrow)
+
+    # File-explorer icons: lucide outlines with element data lifted verbatim from Obsidian's own
+    # bundled icon map (app.js 1.12) so they match every icon the app draws natively. Same mask +
+    # currentColor technique as the arrow above, so each row's icon follows its nav colour (muted
+    # at rest, text on hover/active). Typed set stays deliberately small (pdf / image / canvas /
+    # audio, drawn from file-text / image / layout-dashboard / music); past this scale the Iconize
+    # plugin is the right tool, not more data URIs.
+    def icon_uri(*els):
+        svg = ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black'"
+               " stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>%s</svg>" % "".join(els))
+        return "data:image/svg+xml," + quote(svg)
+    pth = lambda d: "<path d='%s'/>" % d
+    ico_folder = icon_uri(pth("M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9"
+                              "A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"))
+    ico_folder_open = icon_uri(pth("m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6"
+                                   "a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9"
+                                   "a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"))
+    _page = pth("M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706"
+                "l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z")
+    _corner = pth("M14 2v5a1 1 0 0 0 1 1h5")
+    ico_file = icon_uri(_page, _corner)
+    ico_pdf = icon_uri(_page, _corner, pth("M10 9H8"), pth("M16 13H8"), pth("M16 17H8"))
+    ico_image = icon_uri("<rect x='3' y='3' width='18' height='18' rx='2'/>",
+                         "<circle cx='9' cy='9' r='2'/>",
+                         pth("m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"))
+    ico_canvas = icon_uri("<rect x='3' y='3' width='7' height='9' rx='1'/>",
+                          "<rect x='14' y='3' width='7' height='5' rx='1'/>",
+                          "<rect x='14' y='12' width='7' height='9' rx='1'/>",
+                          "<rect x='3' y='16' width='7' height='5' rx='1'/>")
+    ico_audio = icon_uri(pth("M9 18V5l12-2v13"),
+                         "<circle cx='6' cy='18' r='3'/>", "<circle cx='18' cy='16' r='3'/>")
+    fx = 'body:not(.tw-nav-plain) .workspace-leaf-content[data-type="file-explorer"]'
+
+    def nav_type(uri, *exts):
+        sel = ", ".join('[data-path$="%s" i]' % e for e in exts)
+        return (fx + " .nav-file-title:is(%s) .nav-file-title-content::before {\n"
+                "  -webkit-mask-image: url(%s);\n  mask-image: url(%s);\n}\n" % (sel, uri, uri))
+    nav_icons = (
+        "/* File-explorer icons (Style Settings: tw-nav-plain removes them). Folders swap closed/open\n"
+        "   with their collapse state; the vault-root row is excluded; a small typed set covers pdf,\n"
+        "   images, canvas and audio via data-path. See icon_uri() note: artwork is Obsidian's own\n"
+        "   lucide set. */\n"
+        + fx + " :is(.nav-folder-title-content, .nav-file-title-content)::before {\n"
+        '  content: ""; display: inline-block; width: 0.95em; height: 0.95em; margin-inline-end: 0.4em;\n'
+        "  vertical-align: -0.12em; background-color: currentColor; opacity: 0.8;\n"
+        "  -webkit-mask: url(%s) center / contain no-repeat;\n"
+        "  mask: url(%s) center / contain no-repeat;\n}\n" % (ico_file, ico_file)
+        + fx + " .nav-folder-title-content::before {\n"
+        "  -webkit-mask-image: url(%s);\n  mask-image: url(%s);\n}\n" % (ico_folder, ico_folder)
+        + fx + " .nav-folder:not(.is-collapsed) > .nav-folder-title .nav-folder-title-content::before {\n"
+        "  -webkit-mask-image: url(%s);\n  mask-image: url(%s);\n}\n" % (ico_folder_open, ico_folder_open)
+        + fx + " .nav-folder.mod-root > .nav-folder-title .nav-folder-title-content::before { display: none; }\n"
+        + nav_type(ico_pdf, ".pdf")
+        + nav_type(ico_image, ".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg", ".avif", ".bmp")
+        + nav_type(ico_canvas, ".canvas")
+        + nav_type(ico_audio, ".mp3", ".m4a", ".wav", ".ogg", ".flac"))
     extra = (
         "/* Link underline offset: no official Obsidian variable for this, --link-decoration*\n"
         "   (colour, style, thickness) above covers the rest. */\n"
@@ -395,36 +613,68 @@ def build_obsidian(D):
             "     font hooks, unlike every other font-family reference below which is an ordinary CSS\n"
             "     property on a selector we wrote. Keeping them literal matches the one arrangement\n"
             "     already proven to work this session (the original Georgia-fallback diagnosis). */\n"
-            '  --font-text-theme: "Fraunces", Georgia, serif;\n'
+            '  --font-text-theme: "Archivo", system-ui, sans-serif;\n'
             '  --font-interface-theme: "Archivo", system-ui, sans-serif;\n'
             '  --font-monospace-theme: "JetBrains Mono", ui-monospace, monospace;\n'
             "  --nav-item-white-space: normal;\n"
-            "  --line-height-normal: 1.7;\n  --p-spacing: 1.35em;\n}\n\n"
+            "  --line-height-normal: 1.7;\n  --p-spacing: 1.35em;\n"
+            "  /* Air after a heading in live preview: --p-spacing-empty is core's one hook for the first\n"
+            "     line that follows a heading line (verified single consumer in app.css 1.12; 0 by\n"
+            "     default). Reading view gets its match from the margin-block-end rule further down.\n"
+            "     List items breathe a touch more than stock (0.075em). */\n"
+            "  --p-spacing-empty: 0.6em;\n  --list-spacing: 0.1em;\n"
+            "  /* Tighter than stock (0.5625em x 4 = 2.25em): lists sit closer to the text margin. Room\n"
+            "     still clears the hanging dash (offset -0.95em, drawn in the list rules below). */\n"
+            "  --list-indent: 1.5em;\n"
+            "  /* Pull the dash left, clear of the text: the ::after mark anchors at the bullet span's\n"
+            "     static position, so a mark wider than stock's dot otherwise grows toward the text.\n"
+            "     Official knob; applies in reading view and editor alike. */\n"
+            "  --list-bullet-transform: translateX(-0.3em);\n"
+            "  /* JetBrains Mono's tall x-height reads a step larger than Archivo at equal em (same\n"
+            "     reasoning as the Properties panel's 0.75em); one notch under stock font-smaller. */\n"
+            "  --code-size: 0.85em;\n"
+            "  /* Interface icons one stroke-step lighter than stock (m/l 1.75 -> 1.5px, s/xs 2 ->\n"
+            "     1.75px): hairline icons sit with the type instead of against it. Official\n"
+            "     Foundations/Icons vars; xl already ships at 1.25px and stays. */\n"
+            "  --icon-m-stroke-width: 1.5px;\n  --icon-l-stroke-width: 1.5px;\n"
+            "  --icon-s-stroke-width: 1.75px;\n  --icon-xs-stroke-width: 1.75px;\n}\n\n"
             + blk(lit, "theme-dark") + "\n\n" + blk(cold, "theme-light") + "\n\n"
-            "/* Note body reads in Fraunces (serif) -- the reading voice; UI chrome and headings answer in\n"
-            "   Archivo. A touch larger (relative em, so the font-size slider still works), with the reading\n"
-            "   OpenType features already used on the web surface (old-style, proportional figures; common\n"
-            "   ligatures) and explicit optical sizing so Fraunces serves its sturdier text-size cuts here\n"
-            "   rather than the high-contrast display ones. */\n"
+            "/* Note body in Archivo (sans) -- the working voice; headings answer in Fraunces (serif), same\n"
+            "   pairing as every other Try-Works surface. A touch larger (relative em, so the font-size\n"
+            "   slider still works), at the per-mode reading weight (halation-compensated in dark), with\n"
+            "   the reading OpenType features already used on the web surface (old-style, proportional\n"
+            "   figures; common ligatures). text-wrap: pretty improves rag and kills orphans; headings keep\n"
+            "   balance below. font-weight lands on the container, so bold/headings still win by cascade. */\n"
             ".markdown-preview-view, .markdown-source-view.mod-cm6 .cm-content {\n"
             "  font-size: calc(1em * var(--tw-body-scale, 1.2));\n"
-            "  font-optical-sizing: auto;\n"
+            "  font-weight: var(--tw-body-weight, 400);\n"
+            "  text-wrap: pretty;\n"
             "  font-variant-numeric: oldstyle-nums proportional-nums; font-variant-ligatures: common-ligatures;\n}\n"
-            "/* Headings in Archivo (sans): with the body serif, the voices swap -- sans headings mark the\n"
-            "   structure, the serif body carries the reading. Tracking a touch tighter than before\n"
-            "   (grotesques gain from it at display sizes; Fraunces didn't); weights stay from Obsidian's\n"
-            "   --h*-weight. Discretionary ligatures dropped: they were a Fraunces feature, Archivo has none.\n"
-            "   The note title itself is --inline-title-font above, not this selector. */\n"
+            "/* Headings set in Fraunces (serif), matching every other Try-Works surface; body text and UI\n"
+            "   chrome stay Archivo (sans) so the two read as distinct voices. Weights stay from Obsidian's\n"
+            "   --h*-weight. The note title itself is --inline-title-font above, not this selector. */\n"
             ".markdown-rendered :is(h1, h2, h3, h4, h5, h6),\n"
             ".markdown-source-view.mod-cm6 :is(.HyperMD-header, .cm-header) {\n"
-            "  font-family: var(--tw-font-sans); font-variation-settings: normal; letter-spacing: -0.015em; text-wrap: balance;\n"
-            "  font-variant-ligatures: common-ligatures;\n}\n"
-            "/* Blockquotes: the quoted voice shares the body's serif now (it used to be the one serif island\n"
-            "   in a sans body); the sea tint (--blockquote-background-color, per mode above) and the accent\n"
-            "   border carry the distinction instead. Emphasis needs no override anymore either -- em/i just\n"
-            "   inherit Fraunces and render as its true italic. */\n"
+            "  font-family: var(--tw-font-serif); font-variation-settings: normal; letter-spacing: -0.01em; text-wrap: balance;\n"
+            "  font-variant-ligatures: common-ligatures discretionary-ligatures;\n}\n"
+            "/* Breathing room after headings (reading view): 1.4x the paragraph rhythm, in the heading's\n"
+            "   own em so larger headings carry proportionally more air. Core keeps 2.5x above (via\n"
+            "   --heading-spacing), so the hierarchy still reads top-heavy, as it should. Live preview's\n"
+            "   equivalent is --p-spacing-empty in the body block above. Headings inside list items are\n"
+            "   untouched -- core's `li h*` margin-zero rule is more specific. */\n"
+            ".markdown-rendered :is(h1, h2, h3, h4, h5, h6) { margin-block-end: calc(var(--p-spacing) * 1.4); }\n"
+            "/* Blockquotes read as a quoted voice, distinct from body: serif, like headings, over the sea\n"
+            "   tint (--blockquote-background-color, per mode above) and the accent border. */\n"
             ".markdown-rendered blockquote, .cm-s-obsidian .HyperMD-quote {\n"
-            "  border-radius: 0 4px 4px 0;\n}\n"
+            "  border-radius: 0 4px 4px 0; font-family: var(--tw-font-serif);\n}\n"
+            "/* Explicit belt-and-suspenders: emphasis/italic text should read as sans body text like\n"
+            "   everything else around it, not switch typeface. Written directly (not relying on\n"
+            "   --font-text-theme alone) in case Obsidian has its own internal default for em/i independent\n"
+            "   of the theme's text-font hook. Blockquotes are the one deliberate exception (serif, above),\n"
+            "   so they're excluded here. */\n"
+            ".markdown-rendered em:not(blockquote *), .markdown-rendered i:not(blockquote *),\n"
+            ".cm-s-obsidian .cm-em {\n"
+            "  font-family: var(--tw-font-sans);\n}\n"
             '.markdown-rendered pre code, .cm-s-obsidian { font-feature-settings: "liga" 1, "calt" 1; }\n'
             "/* Properties panel in mono, for the key: value read. Obsidian's CSS-variable API has no documented\n"
             "   font-family hook for Properties (only sizes/colours), so this targets the panel's actual DOM classes\n"
@@ -442,30 +692,31 @@ def build_obsidian(D):
             ".footnotes-view .markdown-embed { background-color: transparent; }\n"
             ".footnote, .footnote-list-item, .footnote-list {\n"
             "  background: var(--background-primary) !important;\n}\n"
-            "/* Footnotes stay in the sans voice, upright: they're apparatus, not reading text, so they keep\n"
-            "   Archivo against the serif body. Clipped sources also love arriving as wall-to-wall italics,\n"
-            "   so emphasis inside a footnote flattens to upright instead of rendering as Fraunces italic.\n"
-            "   Covers the footnotes panel, the reading-view footnote section, and live preview's footnote\n"
-            "   definition lines. */\n"
+            "/* Footnotes stay in the sans voice, upright: they're apparatus, not reading text. Clipped\n"
+            "   sources love arriving as wall-to-wall italics, so emphasis inside a footnote flattens to\n"
+            "   upright rather than rendering italic. Covers the footnotes panel, the reading-view footnote\n"
+            "   section, and live preview's footnote definition lines. */\n"
             ".footnotes-view .footnote-content, .markdown-rendered .footnotes,\n"
             ".cm-s-obsidian .cm-line.HyperMD-footnote {\n"
             "  font-family: var(--tw-font-sans); font-style: normal;\n}\n"
             ".footnotes-view .footnote-content :is(em, i), .markdown-rendered .footnotes :is(em, i),\n"
             ".cm-s-obsidian .cm-line.HyperMD-footnote .cm-em {\n"
             "  font-style: normal;\n}\n\n"
-            + code_style + "\n\n" + extra +
+            + code_style + "\n\n" + extra + "\n" + nav_icons + "\n" + _task_rules() + "\n" + _FEATURES_CSS + "\n"
             "/* File explorer: slightly smaller labels that wrap to a second/third line instead of truncating. */\n"
             '.workspace-leaf-content[data-type="file-explorer"] .tree-item-self { height: auto; }\n'
             '.workspace-leaf-content[data-type="file-explorer"] .tree-item-inner {\n'
             "  font-size: 0.88em; line-height: 1.25; white-space: normal; overflow: visible; text-overflow: clip; word-break: break-word;\n}\n\n"
             "/* Style Settings escape hatches: class present reverts that one piece (to Obsidian stock, or\n"
-            "   to the earlier Try-Works voice). Font stack literal in tw-body-sans for the same reason the\n"
+            "   to the other Try-Works voice). Font stack literal in tw-body-serif for the same reason the\n"
             "   three theme font hooks above are literal. */\n"
-            "body.tw-headings-serif { --inline-title-font: var(--tw-font-serif); }\n"
-            "body.tw-headings-serif .markdown-rendered :is(h1, h2, h3, h4, h5, h6),\n"
-            "body.tw-headings-serif .markdown-source-view.mod-cm6 :is(.HyperMD-header, .cm-header) {\n"
-            "  font-family: var(--tw-font-serif); letter-spacing: -0.01em;\n"
-            "  font-variant-ligatures: common-ligatures discretionary-ligatures;\n}\n"
-            'body.tw-body-sans { --font-text-theme: "Archivo", system-ui, sans-serif; }\n'
+            "body.tw-headings-sans { --inline-title-font: var(--tw-font-sans); }\n"
+            "body.tw-headings-sans .markdown-rendered :is(h1, h2, h3, h4, h5, h6),\n"
+            "body.tw-headings-sans .markdown-source-view.mod-cm6 :is(.HyperMD-header, .cm-header) {\n"
+            "  font-family: var(--tw-font-sans); letter-spacing: -0.015em;\n"
+            "  font-variant-ligatures: common-ligatures;\n}\n"
+            'body.tw-body-serif { --font-text-theme: "Fraunces", Georgia, serif; }\n'
+            "body.tw-body-serif .markdown-preview-view, body.tw-body-serif .markdown-source-view.mod-cm6 .cm-content {\n"
+            "  font-optical-sizing: auto;\n}\n"
             'body.tw-explorer-truncate .workspace-leaf-content[data-type="file-explorer"] .tree-item-inner {\n'
             "  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;\n}\n")
